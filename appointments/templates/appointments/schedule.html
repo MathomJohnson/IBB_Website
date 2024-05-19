@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+    <body>
+        <h1>Create an Appointment</h1>
+
+        <form method="post" action="/appointments/">
+            {% csrf_token %}
+            {{ form }}
+            <button type="submit", name="Submit">Submit</button>
+        </form>
+    </body>
+</html>

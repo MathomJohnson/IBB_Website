@@ -22,5 +22,5 @@ import appointments.views as AppointmentViews
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', HomeViews.homepage),
-    path('appointments/', AppointmentViews.calendar),
+    path('appointments/', AppointmentViews.schedule),
 ]
