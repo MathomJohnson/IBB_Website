@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
+    'crispy_bootstrap4',
     'home.apps.HomeConfig',
     'appointments.apps.AppointmentsConfig',
     'register.apps.RegisterConfig',
@@ -127,3 +129,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Email Settings
 
+CRISPY_TEMPLATE_PACK="bootstrap4"
