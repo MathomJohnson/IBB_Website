@@ -1,15 +1,13 @@
-<!DOCTYPE html>
-<html>
-    <head>
+{% extends 'home/base.html' %}
 
-    </head>
-    <body>
-        <h1>Create an Appointment</h1>
+{% block title %}Appointments{% endblock %}
 
-        <form method="post" action="/appointments/">
-            {% csrf_token %}
-            {{ form }}
-            <button type="submit", name="Submit">Submit</button>
-        </form>
-    </body>
-</html>
+{% block content %}        
+    <h1>Create an Appointment</h1>
+
+    <form method="post" action="/appointments/">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit", name="Submit">Submit</button>
+    </form>
+{% endblock %}

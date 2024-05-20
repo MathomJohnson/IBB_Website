@@ -18,9 +18,12 @@ from django.contrib import admin
 from django.urls import path
 import home.views as HomeViews
 import appointments.views as AppointmentViews
+from register import views as v
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', HomeViews.homepage),
     path('appointments/', AppointmentViews.schedule),
+    path('register/', v.register),
+    path('', HomeViews.homepage),
+    
 ]
