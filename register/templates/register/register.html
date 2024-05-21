@@ -4,7 +4,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-    <div>
+    <div id="content" name="content">
         <form method="POST" class="form-group form-container">
             {% csrf_token %}
             {{ form|crispy }}

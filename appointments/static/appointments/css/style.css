@@ -8335,7 +8335,7 @@ h1, h2, h3, h4, h5,
     outline: none; }
 
 #cancel-button {
-  background: #bd2130; }
+  background: #c4050c; }
 
 #add-button {
   background-color: #c4050c;
@@ -8440,7 +8440,7 @@ h1, h2, h3, h4, h5,
 /* input dialog */
 .dialog {
   z-index: 5;
-  background: #000;
+  background: #c4050c;
   position: absolute;
   width: 50%;
   height: 500px;
@@ -8458,6 +8458,7 @@ h1, h2, h3, h4, h5,
   font-size: 28px; }
 
 .form-container {
+  background-color: #c4050c;
   margin-top: 25%; }
 
 .form-label {

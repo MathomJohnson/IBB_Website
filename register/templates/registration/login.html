@@ -5,14 +5,18 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-    <div>
-        <form method="POST" class="form-group form-container">
-            {% csrf_token %}
-            {{ form|crispy }}
+    
+    <div id="content" name="content">
+        <div>
+            <form method="POST" class="form-group form-container">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <br>
+                <button type="submit" class="btn btn-success">Login</button>
+            </form>
             <br>
-            <button type="submit" class="btn btn-success">Login</button>
-        </form>
-        <br>
-        <p>Don't have an account? Get started <a href="/register/">here</a>.</p>
+            <p>Don't have an account? Get started <a href="/register/">here</a>.</p>
+        </div>
     </div>
+  
 {% endblock %}

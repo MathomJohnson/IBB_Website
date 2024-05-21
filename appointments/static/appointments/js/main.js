@@ -133,7 +133,7 @@ function new_event(event) {
     // Event handler for cancel button
     $("#cancel-button").click(function() {
         $("#name").removeClass("error-input");
-        $("#time-slot").removeClass("error-input");
+        $("#start-time").removeClass("error-input");//used to be #time-slot
         $("#dialog").hide(250);
         $(".events-container").show(250);
     });
@@ -141,7 +141,7 @@ function new_event(event) {
     $("#ok-button").unbind().click({date: event.data.date}, function() {
         var date = event.data.date;
         var name = $("#name").val().trim();
-        var start_time = $("#start-time").val().trim();
+        var start_time = $("#start-time").val();
         var day = parseInt($(".active-date").html());
         // Basic form validation
         if(name.length === 0) {
