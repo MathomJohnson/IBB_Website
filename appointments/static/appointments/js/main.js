@@ -228,8 +228,8 @@ function show_events(events, month, day) {
         // Go through and add each event as a card to the events container
         for(var i=0; i<events.length; i++) {
             var event_card = $("<div class='event-card'></div>");
-            var event_name = $("<div class='event-name'>"+events[i]["occasion"]+":</div>");
-            var event_start = $("<div class='event-count'>"+events[i]["start_time"]+" Invited</div>");
+            var event_name = $("<div class='event-name'>"+events[i]["mentor"]+":</div>");
+            var event_start = $("<div class='event-count'>"+events[i]["time"]+" Invited</div>");
             if(events[i]["cancelled"]===true) {
                 $(event_card).css({
                     "border-left": "10px solid #FF1744"
@@ -245,14 +245,27 @@ function show_events(events, month, day) {
 // Checks if a specific date has any events
 function check_events(day, month, year) {
     var events = [];
-    for(var i=0; i<event_data["events"].length; i++) {
-        var event = event_data["events"][i];
-        if(event["day"]===day &&
-            event["month"]===month &&
-            event["year"]===year) {
-                events.push(event);
+    $.ajax({
+        url: '/calendar/get-events/',
+        method: 'GET',
+        data: {
+            year: year,
+            month: month,
+            day: day
+        },
+        async: false,  // Synchronous request to ensure events are loaded before continuing
+        success: function(response) {
+            if (response.status === 'success') {
+                events = response.events;
+            } else {
+                alert('Failed to load events');
             }
-    }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+            alert('An error occurred while loading the events');
+        }
+    });
     return events;
 }
 

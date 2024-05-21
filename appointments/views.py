@@ -33,6 +33,22 @@ def add_event(request):
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
 
 
+def get_events(request):
+    if request.method == 'GET':
+        year = request.GET.get('year')
+        month = request.GET.get('month')
+        day = request.GET.get('day')
+        
+        events = Meeting.objects.all()
+        if year and month and day:
+            events = events.filter(year=year, month=month, day=day)
+        
+        event_list = list(events.values())
+        
+        return JsonResponse({'status': 'success', 'events': event_list}, status=200)
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+
 
 def schedule(request):
     if request.method == "POST":
