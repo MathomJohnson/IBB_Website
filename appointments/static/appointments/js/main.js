@@ -169,7 +169,45 @@ function new_event_json(name, start_time, date, day) {
         "month": date.getMonth()+1,
         "day": day
     };
-    event_data["events"].push(event);
+
+    $.ajax({
+        url: '/calendar/add-event/',
+        method: 'POST',
+        data: JSON.stringify(event),
+        contentType: 'application/json',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')  // Include the CSRF token in the headers
+        },
+        success: function(response) {
+            if (response.status === 'success') {
+                event_data["events"].push(event);  // Optionally, update local event_data to reflect the new event
+                init_calendar(date);  // Reinitialize calendar with updated events
+            } else {
+                alert('Failed to add event');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+            alert('An error occurred while adding the event');
+        }
+    });
+    //event_data["events"].push(event);
+}
+
+// Function to get the CSRF token from the cookie
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
 }
 
 // Display all events of the selected date in card views

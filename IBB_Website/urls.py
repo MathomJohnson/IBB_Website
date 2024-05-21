@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('appointments/', AppointmentViews.schedule),
     path('calendar/', AppointmentViews.calendar),
+    path('calendar/add-event/', AppointmentViews.add_event),
     path('register/', v.register),
     path('', HomeViews.homepage),
     path('', include('django.contrib.auth.urls')),

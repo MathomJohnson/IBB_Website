@@ -1,12 +1,38 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from .forms import NewAppointment
 from .models import Appointment
 from django.core.mail import send_mail
 from django.conf import settings
+import json
+from .models import Meeting
 
 def calendar(request):
     return render(request, 'appointments/index.html', {})
+
+
+
+#@csrf_exempt  # Only use this for development, for production use proper CSRF handling
+def add_event(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            name = data['occasion']
+            time = data['start_time']
+            year = data['year']
+            month = data['month']
+            day = data['day']
+            
+            event = Meeting(mentor=name, time=time, year=year, month=month, day=day)
+            event.save()
+            
+            return JsonResponse({'status': 'success'}, status=201)
+        except (KeyError, TypeError, ValueError) as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+
+
 
 def schedule(request):
     if request.method == "POST":

@@ -17,4 +17,4 @@ class Meeting(models.Model):
     cancelled = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.mentor+", "+self.time+", "+self.year+", "+self.month+", "+self.day+", "+self.cancelled
+        return self.mentor+", "+self.time+", "+str(self.year)+", "+str(self.month)+", "+str(self.day)+", "+str(self.cancelled)
