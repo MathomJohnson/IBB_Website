@@ -8191,6 +8191,7 @@ h1, h2, h3, h4, h5,
 
 /*  Events display */
 .events-container {
+  background-color: #c4050c;
   overflow-y: scroll;
   height: 100%;
   width: 50%;
@@ -8337,6 +8338,7 @@ h1, h2, h3, h4, h5,
   background: #bd2130; }
 
 #add-button {
+  background-color: #c4050c;
   display: block;
   position: absolute;
   right: 20px;
@@ -8415,8 +8417,8 @@ h1, h2, h3, h4, h5,
   border-color: #cd4dcc; }
 
 .event-date {
-  border-color: #7e0cf5;
-  background: #7e0cf5;
+  border-color: #c4050c;
+  background: #c4050c;
   color: #fff; }
   .event-date:after {
     position: absolute;
@@ -8429,11 +8431,11 @@ h1, h2, h3, h4, h5,
     background: #28a745; }
 
 .active-date {
-  background: #cd4dcc;
-  color: #fff; }
+  background: #dfc2a0;
+  color: black; }
 
 .event-date.active-date {
-  background: #7e0cf5; }
+  background: #c4050c; }
 
 /* input dialog */
 .dialog {

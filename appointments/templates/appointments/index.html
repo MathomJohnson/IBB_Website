@@ -65,7 +65,11 @@
 			              </tbody> 
 				          </table>
 				        </div> 
-				        <button class="button" id="add-button">Add Availability</button>
+						{% if user.is_authenticated %}
+						  {% if user.is_staff %}
+				            <button class="button" id="add-button">Add Availability</button>
+						  {% endif %}
+						{% endif %}
 				      </div>
 				    </div>
 				    <div class="events-container">
