@@ -269,7 +269,6 @@ function show_events(events, month, day) {
                         if (response.success) {
                             // Remove the event card from the DOM
                             event_card.remove();
-                            init_calendar(events_date)
                         } else {
                             alert("Failed to delete the event.");
                         }
