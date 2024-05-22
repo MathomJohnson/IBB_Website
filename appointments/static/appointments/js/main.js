@@ -216,6 +216,7 @@ function show_events(events, month, day) {
     $(".events-container").empty();
     $(".events-container").show(250);
     console.log(event_data["events"]);
+    
     // If there are no events for this date, notify the user
     if(events.length===0) {
         var event_card = $("<div class='event-card'></div>");
@@ -225,18 +226,67 @@ function show_events(events, month, day) {
         $(".events-container").append(event_card);
     }
     else {
+        // Create date of events
+        var events_date = new Date(events[0].year, month, day)
         // Go through and add each event as a card to the events container
         for(var i=0; i<events.length; i++) {
+            console.log("event#: " + events[i].id)
+            // Convert the 24 clock to the 12 hour clock time
+            let time = events[i]["time"];
+            let parts = time.split(':');
+            let hour = parseInt(parts[0], 10);  // Convert hour part to integer
+            let minute = parts[1];
+            let period = "AM";
+            if (hour >= 12) {
+              period = "PM";
+              if (hour > 12) {
+                hour = hour - 12;
+              }
+            } else if (hour === 0) {
+              hour = 12;
+            }
+            let newTime = hour + ":" + minute + " " + period;
+
             var event_card = $("<div class='event-card'></div>");
-            var event_name = $("<div class='event-name'>"+events[i]["mentor"]+":</div>");
-            var event_start = $("<div class='event-count'>"+events[i]["time"]+" Invited</div>");
+            var event_name = $("<div class='event-name' style='margin-right: 8px;'>Mentor: "+events[i]["mentor"]+" "+events[i].id+"</div>");
+            var event_start = $("<div class='event-count'>Time: "+newTime+"</div>");
+            var event_delete_button = $("<button class='delete-event-button' data-event-id='"+ events[i].id +"'>Delete</button>");
+            // Add click event handler for the delete button
+            event_delete_button.on("click", function() {
+                console.log($(this));
+                var eventId = $(this).data('event-id');
+                console.log("event id is: " + eventId)
+                $.ajax({
+                    url: "/calendar/delete-event/",  // URL to send the request to
+                    method: "POST",
+                    data: {
+                        event_id: eventId,
+                    },
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')  // Include the CSRF token in the headers
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Remove the event card from the DOM
+                            event_card.remove();
+                            init_calendar(events_date)
+                        } else {
+                            alert("Failed to delete the event.");
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert("An error occurred while trying to delete the event.");
+                    }
+                });
+            });    
+
             if(events[i]["cancelled"]===true) {
                 $(event_card).css({
                     "border-left": "10px solid #FF1744"
                 });
                 event_count = $("<div class='event-cancelled'>Cancelled</div>");
             }
-            $(event_card).append(event_name).append(event_start);
+            $(event_card).append(event_name).append(event_start).append(event_delete_button);
             $(".events-container").append(event_card);
         }
     }

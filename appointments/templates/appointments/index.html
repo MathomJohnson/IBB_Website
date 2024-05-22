@@ -72,8 +72,17 @@
 				        <h2 class="dialog-header"> Add New Time Slot </h2>
 				        <form class="form" id="form">
 				          <div class="form-container" align="center">
-				            <label class="form-label" id="valueFromMyButton" for="name">Mentor Name</label>
-				            <input class="input" type="text" id="name" maxlength="36">
+				            <label class="form-label" id="valueFromMyButton" for="name">Mentor</label>
+				            <select class="input" id="name" name="name">
+								<option value="" disabled selected>Select Mentor</option>
+								<option value="Ojasvini Sharma" style="color:black">Ojasvini Sharma</option>
+								<option value="Shashandra Suresh" style="color:black">Shashandra Suresh</option>
+								<option value="Devansh Gupta" style="color:black">Devansh Gupta</option>
+								<option value="Rachit Dadu" style="color:black">Rachit Dadu</option>
+								<option value="Ranjini Sarkar" style="color:black">Ranjini Sarkar</option>
+								<option value="Anubhav Choudhery" style="color:black">Anubhav Choudhery</option>
+								<option value="Rishabh Aggarwal" style="color:black">Rishabh Aggarwal</option>
+							</select>
 				            <label class="form-label" id="valueFromMyButton" for="start-time">Start Time</label>
 				            <input class="input" type="time" id="start-time">
 				            <input type="button" value="Cancel" class="button" id="cancel-button">

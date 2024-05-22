@@ -9,6 +9,7 @@ class Appointment(models.Model):
         return self.name
     
 class Meeting(models.Model):
+    id = models.AutoField(primary_key=True)
     mentor = models.CharField(max_length=200)
     time = models.CharField(max_length=100)
     year = models.IntegerField()

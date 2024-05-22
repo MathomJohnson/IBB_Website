@@ -25,7 +25,8 @@ def add_event(request):
             
             event = Meeting(mentor=name, time=time, year=year, month=month, day=day)
             event.save()
-            
+            print("===================")
+            print(event.id)
             return JsonResponse({'status': 'success'}, status=201)
         except (KeyError, TypeError, ValueError) as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
@@ -48,6 +49,20 @@ def get_events(request):
         return JsonResponse({'status': 'success', 'events': event_list}, status=200)
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+    
+
+def delete_event(request):
+    if request.method == 'POST':
+        event_id = request.POST.get('event_id')
+        print("--------------------------------------------")
+        print(event_id)
+        try:
+            event = Meeting.objects.get(id=event_id)
+            event.delete()
+            return JsonResponse({'success': True})
+        except Meeting.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Event does not exist.'})
+    return JsonResponse({'success': False, 'error': 'Invalid request.'})
 
 
 def schedule(request):
