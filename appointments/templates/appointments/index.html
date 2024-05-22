@@ -100,23 +100,38 @@
 	<div class="modal fade" id="meetModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 		<div class="modal-content">
-			<div class="modal-header">
-			<h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-			...
-			</div>
-			<div class="modal-footer">
-			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-			<button type="button" class="btn btn-primary">Save changes</button>
-			</div>
+				<div class="modal-header">
+				<h1 class="modal-title fs-5" id="exampleModalLabel">Sign up for this meeting</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					{% if user.is_authenticated %}
+					<form id="modal-form" method="post" action="/calendar/meet/">
+						{% csrf_token %}
+						<p>Email:</p>
+						<input id="modal-email-field" type="text" name="user_email" value="{{ user_email }}" style="width: 250px;">
+						<p>Topic:</p>
+						<textarea id="modal-topic-field" name="topic" rows="4" cols="54">Describe what you would like to discuss...</textarea>
+						<br>
+					</form>
+					{% else %}
+						<p>Please log in <a href='/login/'>here</a> before continuing.</p>
+					{% endif %}
+				</div>
+				<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" onclick="submitForm()">Save changes</button>
+				</div>
 		</div>
 		</div>
 	</div>
 
 	<script type="text/javascript">
 		var auth = "{{request.user.is_staff}}"
+
+		function submitForm() {
+        	document.getElementById("modal-form").submit();
+    	}
 	</script>
 
 	<script src="{% static 'appointments/js/jquery.min.js' %}"></script>

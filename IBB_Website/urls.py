@@ -27,6 +27,7 @@ urlpatterns = [
     path('calendar/add-event/', AppointmentViews.add_event),
     path('calendar/get-events/', AppointmentViews.get_events),
     path('calendar/delete-event/', AppointmentViews.delete_event),
+    path('calendar/meet/', AppointmentViews.setup_meeting),
     path('register/', v.register),
     path('', HomeViews.homepage),
     path('', include('django.contrib.auth.urls')),

@@ -19,3 +19,4 @@ class Meeting(models.Model):
 
     def __str__(self):
         return self.mentor+" at "+self.time+" on "+str(self.month)+"/"+str(self.day)+"/"+str(self.year)+". Cancelled: "+str(self.cancelled)
+

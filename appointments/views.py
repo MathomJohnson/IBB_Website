@@ -8,7 +8,13 @@ import json
 from .models import Meeting
 
 def calendar(request):
-    return render(request, 'appointments/index.html', {})
+    if request.user.is_authenticated:
+        user_email = request.user.email
+    else:
+        user_email = ''
+    return render(request, 'appointments/index.html', {
+        "user_email":user_email
+    })
 
 
 
@@ -63,6 +69,17 @@ def delete_event(request):
         except Meeting.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Event does not exist.'})
     return JsonResponse({'success': False, 'error': 'Invalid request.'})
+
+
+def setup_meeting(request):
+    if request.method == "POST":
+        user_email = request.POST.get("user_email")
+        topic = request.POST.get("topic")
+        print("#######################")
+        print(user_email)
+        print(topic)
+
+        return HttpResponseRedirect("/calendar/")
 
 
 def schedule(request):

@@ -248,7 +248,7 @@ function show_events(events, month, day, year) {
             var event_card = $("<div class='event-card'></div>");
             var event_name = $("<div class='event-name' style='margin-right: 8px;'>Mentor: "+events[i]["mentor"]+" "+events[i].id+"</div>");
             var event_start = $("<div class='event-count'>Time: "+newTime+"</div>");
-            var meet_button = $("<button type='button' class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#meetModal'>Meet</button>");
+            var meet_button = $("<button type='button' class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#meetModal' data-mentor-name='"+events[i]["mentor"]+"'>Meet</button>");
 
             // Delete Event Handler only displays if user is staff
             if (auth === "True") {
