@@ -15,7 +15,7 @@ $(document).ready(function(){
     $(".months-row").children().eq(date.getMonth()).addClass("active-month");
     init_calendar(date);
     var events = check_events(today, date.getMonth()+1, date.getFullYear());
-    show_events(events, months[date.getMonth()], today);
+    show_events(events, months[date.getMonth()], today, date.getFullYear());
 });
 
 // Initialize the calendar by appending the HTML dates
@@ -52,7 +52,7 @@ function init_calendar(date) {
             var events = check_events(day, month+1, year);
             if(today===day && $(".active-date").length===0) {
                 curr_date.addClass("active-date");
-                show_events(events, months[month], day);
+                show_events(events, months[month], day, year);
             }
             // If this date has any events, style it with .event-date
             if(events.length!==0) {
@@ -81,7 +81,7 @@ function date_click(event) {
     $("#dialog").hide(250);
     $(".active-date").removeClass("active-date");
     $(this).addClass("active-date");
-    show_events(event.data.events, event.data.month, event.data.day);
+    show_events(event.data.events, event.data.month, event.data.day, event.data.year);
 };
 
 // Event handler for when a month is clicked
@@ -211,7 +211,7 @@ function getCookie(name) {
 }
 
 // Display all events of the selected date in card views
-function show_events(events, month, day) {
+function show_events(events, month, day, year) {
     // Clear the dates container
     $(".events-container").empty();
     $(".events-container").show(250);
@@ -226,8 +226,6 @@ function show_events(events, month, day) {
         $(".events-container").append(event_card);
     }
     else {
-        // Create date of events
-        var events_date = new Date(events[0].year, month, day)
         // Go through and add each event as a card to the events container
         for(var i=0; i<events.length; i++) {
             console.log("event#: " + events[i].id)
@@ -253,6 +251,7 @@ function show_events(events, month, day) {
             var event_delete_button = $("<button class='delete-event-button' data-event-id='"+ events[i].id +"'>Delete</button>");
             // Add click event handler for the delete button
             event_delete_button.on("click", function() {
+                var button = $(this);
                 console.log($(this));
                 var eventId = $(this).data('event-id');
                 console.log("event id is: " + eventId)
@@ -267,8 +266,14 @@ function show_events(events, month, day) {
                     },
                     success: function(response) {
                         if (response.success) {
+                            var date = new Date(events[0].year, months.indexOf(month), day);
+                            
                             // Remove the event card from the DOM
-                            event_card.remove();
+                            button.closest('.event-card').remove();
+                            console.log("date is:" + date)
+
+                            init_calendar(date);
+                            //event_card.remove();
                         } else {
                             alert("Failed to delete the event.");
                         }
