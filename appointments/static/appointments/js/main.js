@@ -180,7 +180,7 @@ function new_event_json(name, start_time, date, day) {
         },
         success: function(response) {
             if (response.status === 'success') {
-                event_data["events"].push(event);  // Optionally, update local event_data to reflect the new event
+                //event_data["events"].push(event);  // Optionally, update local event_data to reflect the new event
                 init_calendar(date);  // Reinitialize calendar with updated events
             } else {
                 alert('Failed to add event');
@@ -248,41 +248,48 @@ function show_events(events, month, day, year) {
             var event_card = $("<div class='event-card'></div>");
             var event_name = $("<div class='event-name' style='margin-right: 8px;'>Mentor: "+events[i]["mentor"]+" "+events[i].id+"</div>");
             var event_start = $("<div class='event-count'>Time: "+newTime+"</div>");
-            var event_delete_button = $("<button class='delete-event-button' data-event-id='"+ events[i].id +"'>Delete</button>");
-            // Add click event handler for the delete button
-            event_delete_button.on("click", function() {
-                var button = $(this);
-                console.log($(this));
-                var eventId = $(this).data('event-id');
-                console.log("event id is: " + eventId)
-                $.ajax({
-                    url: "/calendar/delete-event/",  // URL to send the request to
-                    method: "POST",
-                    data: {
-                        event_id: eventId,
-                    },
-                    headers: {
-                        'X-CSRFToken': getCookie('csrftoken')  // Include the CSRF token in the headers
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            var date = new Date(events[0].year, months.indexOf(month), day);
-                            
-                            // Remove the event card from the DOM
-                            button.closest('.event-card').remove();
-                            console.log("date is:" + date)
+            var meet_button = $("<button type='button' class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#meetModal'>Meet</button>");
 
-                            init_calendar(date);
-                            //event_card.remove();
-                        } else {
-                            alert("Failed to delete the event.");
+            // Delete Event Handler only displays if user is staff
+            if (auth === "True") {
+                var event_delete_button = $("<button class='delete-event-button' data-event-id='"+ events[i].id +"'>Delete</button>");
+                // Add click event handler for the delete button
+                event_delete_button.on("click", function() {
+                    console.log("is authenticated: " + typeof auth)
+                    var button = $(this);
+                    console.log($(this));
+                    var eventId = $(this).data('event-id');
+                    console.log("event id is: " + eventId)
+                    $.ajax({
+                        url: "/calendar/delete-event/",  // URL to send the request to
+                        method: "POST",
+                        data: {
+                            event_id: eventId,
+                        },
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken')  // Include the CSRF token in the headers
+                        },
+                        success: function(response) {
+                            if (response.success) {
+
+                                var date = new Date(events[0].year, months.indexOf(month), day);
+                                
+                                // Remove the event card from the DOM
+                                button.closest('.event-card').remove();
+                                console.log("date is:" + date)
+
+                                init_calendar(date);
+                                //event_card.remove();
+                            } else {
+                                alert("Failed to delete the event.");
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            alert("An error occurred while trying to delete the event.");
                         }
-                    },
-                    error: function(xhr, status, error) {
-                        alert("An error occurred while trying to delete the event.");
-                    }
-                });
-            });    
+                    });
+                });    
+            }
 
             if(events[i]["cancelled"]===true) {
                 $(event_card).css({
@@ -290,7 +297,11 @@ function show_events(events, month, day, year) {
                 });
                 event_count = $("<div class='event-cancelled'>Cancelled</div>");
             }
-            $(event_card).append(event_name).append(event_start).append(event_delete_button);
+            if (auth === "True") {
+                $(event_card).append(event_name).append(event_start).append(event_delete_button);
+            } else {
+                $(event_card).append(event_name).append(event_start).append(meet_button);
+            }
             $(".events-container").append(event_card);
         }
     }
