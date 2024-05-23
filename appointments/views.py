@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from .forms import NewAppointment
 from .models import Appointment
 from django.core.mail import send_mail
@@ -8,6 +8,9 @@ import json
 from .models import Meeting
 import os
 from dotenv import load_dotenv
+import requests
+from requests.auth import HTTPBasicAuth
+
 
 # Load environment variables from .env file
 load_dotenv()
@@ -95,6 +98,42 @@ def setup_meeting(request):
         event.delete()
 
         return HttpResponseRedirect("/calendar/")
+    
+
+def zoom_callback(request):
+    code = request.GET.get('code')
+    if not code:
+        return HttpResponse("Error: No code parameter found in the callback.", status=400)
+
+    # Exchange the authorization code for an access token
+    token_url = 'https://zoom.us/oauth/token'
+    client_id = ''
+    client_secret = ''
+    redirect_uri = 'http://localhost:8000/calendar/zoom/'
+
+    payload = {
+        'grant_type': 'authorization_code',
+        'code': code,
+        'redirect_uri': redirect_uri
+    }
+
+    # Use HTTPBasicAuth to encode the client ID and secret
+    auth = HTTPBasicAuth(client_id, client_secret)
+
+    response = requests.post(token_url, data=payload, auth=auth)
+
+    # Debugging: Print the response content to see if there's an error message
+    print("Response status code:", response.status_code)
+    print("Response content:", response.content)
+
+    if response.status_code == 200:
+        token_data = response.json()
+        access_token = token_data.get('access_token')
+        refresh_token = token_data.get('refresh_token')
+        return HttpResponse(f"Access token: {access_token}<br>Refresh token: {refresh_token}")
+    else:
+        return HttpResponse(f"Error fetching token: {response.content}", status=response.status_code)
+
 
 
 def schedule(request):
