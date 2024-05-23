@@ -108,6 +108,8 @@
 					{% if user.is_authenticated %}
 					<form id="modal-form" method="post" action="/calendar/meet/">
 						{% csrf_token %}
+						<input type="hidden" id="modal-mentor-hidden-input" name="mentor" value="">
+						<input type="hidden" id="modal-event-id-hidden-input" name="event-id" value="">
 						<p>Email:</p>
 						<input id="modal-email-field" type="text" name="user_email" value="{{ user_email }}" style="width: 250px;">
 						<p>Topic:</p>
@@ -126,17 +128,31 @@
 		</div>
 	</div>
 
+	<script src="{% static 'appointments/js/jquery.min.js' %}"></script>
+	<script src="{% static 'appointments/js/popper.js' %}"></script>
+	<script src="{% static 'appointments/js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'appointments/js/main.js' %}"></script>
 	<script type="text/javascript">
 		var auth = "{{request.user.is_staff}}"
 
 		function submitForm() {
         	document.getElementById("modal-form").submit();
     	}
-	</script>
 
-	<script src="{% static 'appointments/js/jquery.min.js' %}"></script>
-	<script src="{% static 'appointments/js/popper.js' %}"></script>
-	<script src="{% static 'appointments/js/bootstrap.min.js' %}"></script>
-	<script src="{% static 'appointments/js/main.js' %}"></script>
+		//create hidden input element in modal and then edit the value of that hidden input below
+		// Add event listener to the modal
+		$('#meetModal').on('show.bs.modal', function (event) {
+			// Button that triggered the modal
+			var button = $(event.relatedTarget);
+			// Extract info from data-* attributes
+			var mentor = button.data('mentor-name');
+			var event_id = button.data('event-id')
+			// Update the modal's content
+			var modal = $(this);
+			modal.find('#exampleModalLabel').text('Meet with ' + mentor);
+			modal.find('#modal-mentor-hidden-input').val(mentor)
+			modal.find('#modal-event-id-hidden-input').val(event_id)
+		});
+	</script>
 {% endblock %}
 

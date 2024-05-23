@@ -6,6 +6,11 @@ from django.core.mail import send_mail
 from django.conf import settings
 import json
 from .models import Meeting
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 def calendar(request):
     if request.user.is_authenticated:
@@ -73,11 +78,21 @@ def delete_event(request):
 
 def setup_meeting(request):
     if request.method == "POST":
-        user_email = request.POST.get("user_email")
-        topic = request.POST.get("topic")
-        print("#######################")
-        print(user_email)
-        print(topic)
+        user_email = request.POST.get("user_email").strip()
+        topic = request.POST.get("topic").strip()
+        mentor = request.POST.get("mentor").strip()
+        event_id = request.POST.get("event-id")
+        club_email = os.getenv('EMAIL_HOST_USER')
+        #Email code here
+        send_mail(
+            'Meeting on ',
+            'content',
+            club_email,
+            [user_email],
+        )
+
+        event = Meeting.objects.get(id=event_id)
+        event.delete()
 
         return HttpResponseRedirect("/calendar/")
 
