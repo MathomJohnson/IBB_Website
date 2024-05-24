@@ -86,17 +86,86 @@ def setup_meeting(request):
         mentor = request.POST.get("mentor").strip()
         event_id = request.POST.get("event-id")
         club_email = os.getenv('EMAIL_HOST_USER')
-        #Email code here
-        send_mail(
-            'Meeting on ',
-            'content',
-            club_email,
-            [user_email],
-        )
 
         event = Meeting.objects.get(id=event_id)
         event.delete()
 
+        #####################
+        try:
+            access_token = os.getenv("ZOOM_ACCESS_TOKEN")
+            refresh_token = os.getenv("ZOOM_REFRESH_TOKEN")
+
+
+            token_url = 'https://zoom.us/oauth/token'
+            payload = {
+                'grant_type': 'refresh_token',
+                'refresh_token': refresh_token,
+                'client_id': "2ffE_XoiQomWyzT8rOGoA",
+                'client_secret': "72BV5V6aWwB5YKh2U2owwsPK38U1qNL4"
+            }
+
+            response = requests.post(token_url, data=payload)
+            response_data = response.json()
+
+            if response.status_code == 200:
+                new_access_token = response_data['access_token']
+                #token_data.refresh_token = response_data['refresh_token']
+                print("******************************")
+                print(new_access_token)
+            else:
+                raise Exception("Failed to refresh token: " + response_data.get('error', 'Unknown error'))
+        except Exception as e:
+            raise Exception("Error refreshing token: " + str(e))
+        #####################
+
+        create_meeting_url = 'https://api.zoom.us/v2/users/internationalbadgerbonds@gmail.com/meetings'
+    
+        headers = {
+            'Authorization': f'Bearer {new_access_token}',
+            'Content-Type': 'application/json'
+        }
+        meeting_details = {
+            "topic": "My Meeting",
+            "type": 2,
+            "start_time": "2024-06-23T10:00:00Z",  # Replace with actual start time
+            "duration": 60,
+            "timezone": "UTC",
+            "password": "123456",
+            "agenda": "Discuss project updates",
+            "settings": {
+                "host_video": True,
+                "participant_video": False,
+                "join_before_host": True,
+                "mute_upon_entry": False,
+                "watermark": False,
+                "use_pmi": False,
+                "approval_type": 2,
+                "audio": "both",
+                "auto_recording": "cloud",
+            }
+        }
+
+        response = requests.post(create_meeting_url, headers=headers, data=json.dumps(meeting_details))
+
+        if response.status_code == 201:
+            meeting_info = response.json()
+            print(meeting_info)
+            return HttpResponseRedirect('/calendar/')
+        else:
+            return HttpResponse(f"Failed to create meeting: {response.content}", status=response.status_code)
+
+        #####################
+
+
+        #Email code here
+        # send_mail(
+        #     'Meeting on ',
+        #     'content',
+        #     club_email,
+        #     [user_email],
+        # )
+
+        
         return HttpResponseRedirect("/calendar/")
     
 
