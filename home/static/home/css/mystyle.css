@@ -20,7 +20,9 @@
 }
 
 .login, .logout{
-    float: right;
+    float: left;
+    margin-top:0px;
+    padding-top:0px;
 }
 
 .nav-red-text {
@@ -45,4 +47,65 @@
     margin-left:20px;
     margin-right:20px;
 }
+
+
+/*Home page styling*/
+.wrapper {
+    width:100%
+}
+#img-mathom {
+    margin-top:20px;
+    width: 85%;
+    display: inline-block;
+}
+.img-container {
+    text-align: center;
+}
+.navbar {
+    padding:0px;
+    margin:0px;
+}
+#name-header {
+    text-align: center;
+    display: block;
+    padding: 10px 0px 10px;
+}
+#mathom-bio {
+    padding: 0px 10px 5px 10px;
+}
+#mathom-bio h3 {
+    text-align: center;
+}
+
+
+@media only screen and (min-width: 576px) {
+    .login, .logout{
+        float: right;
+    }
+}
+
+@media only screen and (min-width: 768px) {
+    .wrapper {
+        width:600px;
+        margin: 0 auto;
+    }
+}
+
+@media only screen and (min-width: 1000px) {
+    .wrapper {
+        width:1000px;
+    }
+    #img-mathom {
+        margin-left: 70px;
+        width: 40%;
+        float: left;
+    }
+    #mathom-bio {
+        margin-left: 10px;
+        margin-top: 180px;
+        width: 50%;
+        float: right;
+    }
+}
+
 
