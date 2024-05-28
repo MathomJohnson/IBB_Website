@@ -21,7 +21,8 @@ def calendar(request):
     else:
         user_email = ''
     return render(request, 'appointments/index.html', {
-        "user_email":user_email
+        "user_email":user_email,
+        "client_id":os.getenv("ZOOM_CLIENT_ID"),
     })
 
 
@@ -118,7 +119,7 @@ def setup_meeting(request):
             raise Exception("Error refreshing token: " + str(e))
         #####################
 
-        create_meeting_url = 'https://api.zoom.us/v2/users/internationalbadgerbonds@gmail.com/meetings'
+        create_meeting_url = 'https://api.zoom.us/v2/users/mgjohnson8@wisc.edu/meetings'
     
         headers = {
             'Authorization': f'Bearer {new_access_token}',
@@ -166,63 +167,44 @@ def setup_meeting(request):
         # )
 
         
-        return HttpResponseRedirect("/calendar/")
     
 
-def zoom_callback(request):
-    code = request.GET.get('code')
-    if not code:
-        return HttpResponse("Error: No code parameter found in the callback.", status=400)
+# def zoom_callback(request):
+#     code = request.GET.get('code')
+#     if not code:
+#         return HttpResponse("Error: No code parameter found in the callback.", status=400)
 
-    # Exchange the authorization code for an access token
-    token_url = 'https://zoom.us/oauth/token'
-    client_id = ''
-    client_secret = ''
-    redirect_uri = 'http://localhost:8000/calendar/zoom/'
+#     # Exchange the authorization code for an access token
+#     token_url = 'https://zoom.us/oauth/token'
+#     client_id = ''
+#     client_secret = ''
+#     redirect_uri = 'http://localhost:8000/calendar/zoom/'
 
-    payload = {
-        'grant_type': 'authorization_code',
-        'code': code,
-        'redirect_uri': redirect_uri
-    }
+#     payload = {
+#         'grant_type': 'authorization_code',
+#         'code': code,
+#         'redirect_uri': redirect_uri
+#     }
 
-    # Use HTTPBasicAuth to encode the client ID and secret
-    auth = HTTPBasicAuth(client_id, client_secret)
+#     # Use HTTPBasicAuth to encode the client ID and secret
+#     auth = HTTPBasicAuth(client_id, client_secret)
 
-    response = requests.post(token_url, data=payload, auth=auth)
+#     response = requests.post(token_url, data=payload, auth=auth)
 
-    # Debugging: Print the response content to see if there's an error message
-    print("Response status code:", response.status_code)
-    print("Response content:", response.content)
+#     # Debugging: Print the response content to see if there's an error message
+#     print("Response status code:", response.status_code)
+#     print("Response content:", response.content)
 
-    if response.status_code == 200:
-        token_data = response.json()
-        access_token = token_data.get('access_token')
-        refresh_token = token_data.get('refresh_token')
-        return HttpResponse(f"Access token: {access_token}<br>Refresh token: {refresh_token}")
-    else:
-        return HttpResponse(f"Error fetching token: {response.content}", status=response.status_code)
+#     if response.status_code == 200:
+#         token_data = response.json()
+#         access_token = token_data.get('access_token')
+#         refresh_token = token_data.get('refresh_token')
+#         return HttpResponse(f"Access token: {access_token}<br>Refresh token: {refresh_token}")
+#     else:
+#         return HttpResponse(f"Error fetching token: {response.content}", status=response.status_code)
 
 
+# def mentor_zoom_auth(request):
+#     authorization_url = 'https://zoom.us/oauth/authorize?client_id=2ffE_XoiQomWyzT8rOGoA&response_type=code&redirect_uri=http://localhost:8000/calendar/&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fcalendar%2F'
+#     return HttpResponseRedirect(authorization_url)
 
-def schedule(request):
-    if request.method == "POST":
-        form = NewAppointment(request.POST)
-
-        if form.is_valid():
-            n = form.cleaned_data["name"]
-            e = form.cleaned_data["email"]
-            a = Appointment(name=n, email=e)
-            a.save()
-
-            send_mail(
-                'django success',
-                'Hello ' + n + '! you are cool.',
-                'mathomjohnson57@gmail.com',
-                [e],
-            )
-
-        return HttpResponseRedirect("/appointments/")
-    else:
-        form = NewAppointment()
-        return render(request, 'appointments/schedule.html', {"form": form})

@@ -22,13 +22,13 @@ from register import views as v
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('appointments/', AppointmentViews.schedule),
     path('calendar/', AppointmentViews.calendar),
     path('calendar/add-event/', AppointmentViews.add_event),
     path('calendar/get-events/', AppointmentViews.get_events),
     path('calendar/delete-event/', AppointmentViews.delete_event),
     path('calendar/meet/', AppointmentViews.setup_meeting),
-    path('calendar/zoom/', AppointmentViews.zoom_callback),
+    # path('calendar/zoom/', AppointmentViews.zoom_callback),
+    # path('mentor-zoom-auth/', AppointmentViews.mentor_zoom_auth),
     path('register/', v.register),
     path('', HomeViews.homepage),
     path('', include('django.contrib.auth.urls')),

@@ -95,6 +95,15 @@
 			</div>
 		</div>
 	</section>
+	<br><br>
+
+	<!-- Mentor zoom authorization button -->
+	{% if user.is_staff %}
+	<a class="btn btn-primary" href="https://zoom.us/oauth/authorize?response_type=code&client_id={{ client_id }}&redirect_uri=http://localhost:8000/calendar/">
+		Authorize with Zoom
+	</a>
+	{% endif %}
+
 
 	<!-- Modal -->
 	<div class="modal fade" id="meetModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
