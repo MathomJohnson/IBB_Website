@@ -1,15 +1,16 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from .forms import NewAppointment
-from .models import Appointment
 from django.core.mail import send_mail
 from django.conf import settings
 import json
-from .models import Meeting
+from .models import Meeting, GoogleToken
 import os
 from dotenv import load_dotenv
 import requests
-from requests.auth import HTTPBasicAuth
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import Flow
+from googleapiclient.discovery import build
 
 
 # Load environment variables from .env file
@@ -80,6 +81,149 @@ def delete_event(request):
     return JsonResponse({'success': False, 'error': 'Invalid request.'})
 
 
+
+def google_login(request):
+    flow = Flow.from_client_config(
+        client_config={
+            "web": {
+                "client_id": "",
+                "client_secret": "",
+                "redirect_uris": ["http://localhost:8000/calendar/oauth2callback"],
+                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                "token_uri": "https://oauth2.googleapis.com/token",
+            }
+        },
+        scopes=['https://www.googleapis.com/auth/calendar'],
+    )
+    flow.redirect_uri = "http://localhost:8000/calendar/oauth2callback"
+
+    authorization_url, state = flow.authorization_url(
+        access_type='offline',
+        include_granted_scopes='true',
+    )
+
+    request.session['state'] = state
+    return HttpResponseRedirect(authorization_url)
+
+def oauth2callback(request):
+    #state = request.session['state']
+
+    flow = Flow.from_client_config(
+        client_config={
+            "web": {
+                "client_id": "",
+                "client_secret": "",
+                "redirect_uris": ["http://localhost:8000/calendar/oauth2callback"],
+                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                "token_uri": "https://oauth2.googleapis.com/token",
+            }
+        },
+        scopes=['https://www.googleapis.com/auth/calendar'],
+        #state=state,
+    )
+    flow.redirect_uri = "http://localhost:8000/calendar/oauth2callback"
+
+
+    authorization_response = request.build_absolute_uri()
+    flow.fetch_token(authorization_response=authorization_response)
+
+    credentials = flow.credentials
+
+    print("--------------------------------")
+    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+    print(credentials.token)
+    print(credentials.refresh_token)
+    print(credentials.token_uri)
+    print(credentials.expiry)
+
+    return HttpResponseRedirect("/")
+
+def setup_google_meet(request):
+    if request.method == "POST":
+        user_email = request.POST.get("user_email").strip()
+        topic = request.POST.get("topic").strip()
+        mentor = request.POST.get("mentor").strip()
+        event_id = request.POST.get("event-id")
+        club_email = os.getenv('EMAIL_HOST_USER')
+
+        event = Meeting.objects.get(id=event_id)
+        event.delete()
+    # print("#################################")
+    # print(os.getenv("GOOGLE_ACCESS_TOKEN"))
+    # new_access_token = refresh_access_token(os.getenv("GOOGLE_REFRESH_TOKEN"))
+    # print(new_access_token)
+    # print("####################################")
+    token = GoogleToken.objects.get(id=1)
+    credentials = Credentials(
+        token=token.access_token,
+        refresh_token=token.refresh_token,
+        token_uri="https://oauth2.googleapis.com/token",
+        client_id="",
+        client_secret="",
+        #scopes=token_data.scopes.split(",")
+    )
+
+    service = build('calendar', 'v3', credentials=credentials)
+
+    event = {
+        'summary': 'Mathomsssssss',
+        'description': 'A meeting with your mentor',
+        'start': {
+            'dateTime': '2024-06-07T16:20:00-05:00',
+            'timeZone': 'America/Chicago',
+        },
+        'end': {
+            'dateTime': '2024-06-07T16:50:00-05:00',
+            'timeZone': 'America/Chicago',
+        },
+        'conferenceData': {
+            'createRequest': {
+                'requestId': 'some-random-string'
+            }
+        },
+        'attendees': [
+            {'email': 'mgjohnson8@wisc.edu'},
+            {'email': 'mathomjohnson57@gmail.com'},
+        ],
+    }
+
+    event = service.events().insert(
+        calendarId='internationalbadgerbonds@gmail.com',
+        body=event,
+        conferenceDataVersion=1,
+    ).execute()
+
+    # Send email to mentee with the meeting link
+    meeting_link = event['hangoutLink']
+    print("meeting link: " + meeting_link)
+    return HttpResponseRedirect("/")
+
+
+def refresh_access_token(refresh_token):
+    client_id = ""
+    client_secret = ""
+    token_uri = "https://oauth2.googleapis.com/token"
+
+    data = {
+        'client_id': client_id,
+        'client_secret': client_secret,
+        'refresh_token': refresh_token,
+        'grant_type': 'refresh_token',
+    }
+
+    response = requests.post(token_uri, data=data)
+
+    if response.status_code == 200:
+        tokens = response.json()
+        new_access_token = tokens['access_token']
+        return new_access_token
+    else:
+        raise Exception("Failed to refresh access token: " + response.text)
+
+
+
+
+
 def setup_meeting(request):
     if request.method == "POST":
         user_email = request.POST.get("user_email").strip()
@@ -119,7 +263,7 @@ def setup_meeting(request):
             raise Exception("Error refreshing token: " + str(e))
         #####################
 
-        create_meeting_url = 'https://api.zoom.us/v2/users/mgjohnson8@wisc.edu/meetings'
+        create_meeting_url = 'https://api.zoom.us/v2/users/internationalbadgerbonds@gmail.com/meetings'
     
         headers = {
             'Authorization': f'Bearer {new_access_token}',

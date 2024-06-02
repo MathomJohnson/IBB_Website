@@ -97,13 +97,6 @@
 	</section>
 	<br><br>
 
-	<!-- Mentor zoom authorization button -->
-	{% if user.is_staff %}
-	<a class="btn btn-primary" href="https://zoom.us/oauth/authorize?response_type=code&client_id={{ client_id }}&redirect_uri=http://localhost:8000/calendar/">
-		Authorize with Zoom
-	</a>
-	{% endif %}
-
 
 	<!-- Modal -->
 	<div class="modal fade" id="meetModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -129,10 +122,12 @@
 						<p>Please log in <a href='/login/'>here</a> before continuing.</p>
 					{% endif %}
 				</div>
+				{% if user.is_authenticated %}
 				<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 				<button type="button" class="btn btn-primary" onclick="submitForm()">Save changes</button>
 				</div>
+				{% endif %}
 		</div>
 		</div>
 	</div>

@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import Appointment, Meeting
+from .models import GoogleToken, Meeting
 
 # Register your models here.
-admin.site.register(Appointment)
+admin.site.register(GoogleToken)
 admin.site.register(Meeting)

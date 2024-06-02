@@ -252,7 +252,7 @@ function show_events(events, month, day, year) {
 
             // Delete Event Handler only displays if user is staff
             if (auth === "True") {
-                var event_delete_button = $("<button class='delete-event-button' data-event-id='"+ events[i].id +"'>Delete</button>");
+                var event_delete_button = $("<button class='delete-event-button btn btn-danger' data-event-id='"+ events[i].id +"'>Delete</button>");
                 // Add click event handler for the delete button
                 event_delete_button.on("click", function() {
                     console.log("is authenticated: " + typeof auth)
