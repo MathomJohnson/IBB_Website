@@ -11,6 +11,9 @@ import requests
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
+from datetime import datetime, timedelta
+from django.utils import timezone
+import pytz
 
 
 # Load environment variables from .env file
@@ -144,81 +147,104 @@ def setup_google_meet(request):
         topic = request.POST.get("topic").strip()
         mentor = request.POST.get("mentor").strip()
         event_id = request.POST.get("event-id")
-        club_email = os.getenv('EMAIL_HOST_USER')
+        #club_email = os.getenv('EMAIL_HOST_USER')
 
         event = Meeting.objects.get(id=event_id)
+        day = event.day
+        month = event.month
+        year = event.year
+        time = str(event.time)
         event.delete()
-    # print("#################################")
-    # print(os.getenv("GOOGLE_ACCESS_TOKEN"))
-    # new_access_token = refresh_access_token(os.getenv("GOOGLE_REFRESH_TOKEN"))
-    # print(new_access_token)
-    # print("####################################")
-    token = GoogleToken.objects.get(id=1)
-    credentials = Credentials(
-        token=token.access_token,
-        refresh_token=token.refresh_token,
-        token_uri="https://oauth2.googleapis.com/token",
-        client_id="",
-        client_secret="",
-        #scopes=token_data.scopes.split(",")
-    )
 
-    service = build('calendar', 'v3', credentials=credentials)
+        #create iso formatted date/time
+        hour, minute, second = map(int, time.split(":"))
+        dt_start = datetime(year, month, day, hour, minute, second)
+        iso_format_start = dt_start.strftime('%Y-%m-%dT%H:%M:%S')
+        iso_format_start += "-05:00"
+        dt_end = dt_start + timedelta(minutes=30)
+        iso_format_end = dt_end.strftime('%Y-%m-%dT%H:%M:%S')
+        iso_format_end += "-05:00"
+        
+        # get token and refresh it if it is expired
+        token = GoogleToken.objects.get(id=1)
+        access_token = refresh_if_needed(token)
 
-    event = {
-        'summary': 'Mathomsssssss',
-        'description': 'A meeting with your mentor',
-        'start': {
-            'dateTime': '2024-06-07T16:20:00-05:00',
-            'timeZone': 'America/Chicago',
-        },
-        'end': {
-            'dateTime': '2024-06-07T16:50:00-05:00',
-            'timeZone': 'America/Chicago',
-        },
-        'conferenceData': {
-            'createRequest': {
-                'requestId': 'some-random-string'
-            }
-        },
-        'attendees': [
-            {'email': 'mgjohnson8@wisc.edu'},
-            {'email': 'mathomjohnson57@gmail.com'},
-        ],
-    }
+        credentials = Credentials(
+            token=access_token,
+            refresh_token=token.refresh_token,
+            token_uri="https://oauth2.googleapis.com/token",
+            client_id=os.getenv("GOOGLE_CLIENT_ID"),
+            client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
+            #scopes=token_data.scopes.split(",")
+        )
 
-    event = service.events().insert(
-        calendarId='internationalbadgerbonds@gmail.com',
-        body=event,
-        conferenceDataVersion=1,
-    ).execute()
+        service = build('calendar', 'v3', credentials=credentials)
 
-    # Send email to mentee with the meeting link
-    meeting_link = event['hangoutLink']
-    print("meeting link: " + meeting_link)
-    return HttpResponseRedirect("/")
+        event = {
+            'summary': 'A meeting with '+mentor,
+            'description': topic,
+            'start': {
+                'dateTime': iso_format_start,
+                'timeZone': 'America/Chicago',
+            },
+            'end': {
+                'dateTime': iso_format_end,
+                'timeZone': 'America/Chicago',
+            },
+            'conferenceData': {
+                'createRequest': {
+                    'requestId': 'some-random-string'
+                }
+            },
+            'attendees': [
+                {'email': 'mgjohnson8@wisc.edu'},
+                {'email': 'mathomjohnson57@gmail.com'},
+            ],
+        }
+
+        event = service.events().insert(
+            calendarId='internationalbadgerbonds@gmail.com',
+            body=event,
+            conferenceDataVersion=1,
+        ).execute()
+
+        # Send email to mentee with the meeting link
+        meeting_link = event['hangoutLink']
+        print("meeting link: " + meeting_link)
+        return HttpResponseRedirect("/")
 
 
-def refresh_access_token(refresh_token):
-    client_id = ""
-    client_secret = ""
-    token_uri = "https://oauth2.googleapis.com/token"
+def refresh_if_needed(token):
+    if datetime.now(pytz.UTC) >= token.expiration:
+        client_id = os.getenv("GOOGLE_CLIENT_ID")
+        client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
+        token_uri = "https://oauth2.googleapis.com/token"
 
-    data = {
-        'client_id': client_id,
-        'client_secret': client_secret,
-        'refresh_token': refresh_token,
-        'grant_type': 'refresh_token',
-    }
+        data = {
+            'client_id': client_id,
+            'client_secret': client_secret,
+            'refresh_token': token.refresh_token,
+            'grant_type': 'refresh_token',
+        }
 
-    response = requests.post(token_uri, data=data)
+        response = requests.post(token_uri, data=data)
 
-    if response.status_code == 200:
-        tokens = response.json()
-        new_access_token = tokens['access_token']
-        return new_access_token
+        if response.status_code == 200:
+            tokens = response.json()
+            expiration = datetime.now(pytz.UTC) + timedelta(seconds=tokens['expires_in'])
+            new_access_token = tokens['access_token']
+            token.access_token = new_access_token
+            token.expiration = expiration
+            token.save()
+            return new_access_token
+        else:
+            raise Exception("Failed to refresh access token: " + response.text)
     else:
-        raise Exception("Failed to refresh access token: " + response.text)
+        return token.access_token
+
+
+
+
 
 
 
@@ -230,7 +256,8 @@ def setup_meeting(request):
         topic = request.POST.get("topic").strip()
         mentor = request.POST.get("mentor").strip()
         event_id = request.POST.get("event-id")
-        club_email = os.getenv('EMAIL_HOST_USER')
+        #club_email = os.getenv('EMAIL_HOST_USER')
+
 
         event = Meeting.objects.get(id=event_id)
         event.delete()
