@@ -53,7 +53,7 @@
 .wrapper {
     width:100%
 }
-#img-mathom {
+.img-mathom {
     margin-top:20px;
     width: 85%;
     display: inline-block;
@@ -70,10 +70,10 @@
     display: block;
     padding: 10px 0px 10px;
 }
-#mathom-bio {
+.mathom-bio {
     padding: 0px 10px 5px 10px;
 }
-#mathom-bio h3 {
+.mathom-bio h3 {
     text-align: center;
 }
 
@@ -95,17 +95,20 @@
     .wrapper {
         width:1000px;
     }
-    #img-mathom {
+    .img-mathom {
         margin-left: 70px;
         width: 40%;
         float: left;
     }
-    #mathom-bio {
+    .mathom-bio {
         margin-left: 10px;
-        margin-top: 180px;
+        margin-top: 60px;
         width: 50%;
         float: right;
     }
+    .mentor {
+        padding-top: 15px;
+        padding-bottom: 450px;
+        border-bottom: 1px solid black;
+    }
 }
-
-

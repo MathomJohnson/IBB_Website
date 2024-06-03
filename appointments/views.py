@@ -212,12 +212,12 @@ def setup_google_meet(request):
         meeting_link = event['hangoutLink']
         send_mail(
             'Mentor Meeting Scheduled',
-            'Google Meet with ' + mentor + " scheduled for " + str(month)+"/"+str(day)+"/"+str(year) + " at " + str(time) + ".\n",
-            # + "The link to this Google Meet is: " + meeting_link 
-            # + "\nTo cancel this meeting, delete the event from your Google Calendar or mark your attendence as \"No\""
-            # + "\nTopic of the meeting: " + topic,
+            'Google Meet with ' + mentor + " scheduled for " + str(month)+"/"+str(day)+"/"+str(year) + " at " + str(time) + ".\n"
+            + "The link to this Google Meet is: " + meeting_link 
+            + "\nTo cancel this meeting, delete the event from your Google Calendar or mark your attendence as \"No\""
+            + "\nTopic of the meeting: " + topic,
             os.getenv("EMAIL_HOST_USER"),
-            [user_email],
+            [user_email, "mathomjohnson57@gmail.com"],
         )
 
 
