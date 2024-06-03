@@ -181,7 +181,7 @@ def setup_google_meet(request):
         service = build('calendar', 'v3', credentials=credentials)
 
         event = {
-            'summary': 'A meeting with '+mentor,
+            'summary': 'Meeting with '+mentor,
             'description': topic,
             'start': {
                 'dateTime': iso_format_start,
@@ -197,7 +197,7 @@ def setup_google_meet(request):
                 }
             },
             'attendees': [
-                {'email': 'mgjohnson8@wisc.edu'},
+                {'email': user_email},
                 {'email': 'mathomjohnson57@gmail.com'},
             ],
         }
@@ -210,7 +210,17 @@ def setup_google_meet(request):
 
         # Send email to mentee with the meeting link
         meeting_link = event['hangoutLink']
-        print("meeting link: " + meeting_link)
+        send_mail(
+            'Mentor Meeting Scheduled',
+            'Google Meet with ' + mentor + " scheduled for " + str(month)+"/"+str(day)+"/"+str(year) + " at " + str(time) + ".\n",
+            # + "The link to this Google Meet is: " + meeting_link 
+            # + "\nTo cancel this meeting, delete the event from your Google Calendar or mark your attendence as \"No\""
+            # + "\nTopic of the meeting: " + topic,
+            os.getenv("EMAIL_HOST_USER"),
+            [user_email],
+        )
+
+
         return HttpResponseRedirect("/")
 
 
