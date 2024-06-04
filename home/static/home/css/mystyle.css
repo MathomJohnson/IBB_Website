@@ -56,14 +56,6 @@ body{
 .wrapper {
     width:100%
 }
-.mentor {
-    display: flex;
-    align-items: center;
-    border: 1px solid black;
-    background-color: #dfc2a0;
-    box-shadow: inset;
-    box-shadow: 15px 15px 10px black;
-}
 .navbar {
     padding:0px;
     margin:0px;
@@ -75,6 +67,17 @@ body{
     padding: 30px 0px 30px;
     text-shadow: 3px 3px 3px rgb(52, 51, 53);
     font-weight: bold;
+}
+.mentor {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid black;
+}
+.mentor img {
+    width: 300px;
+    height: auto;
 }
 
 
@@ -96,6 +99,14 @@ body{
         width:1000px;
     }
     .mentor {
+        display: flex;
+        align-items: center;
+        border: 1px solid black;
+        background-color: #dfc2a0;
+        box-shadow: 15px 15px 10px black;
+    }
+    .mentor {
+        flex-direction: row;
         height:425px;
         /* padding-top: 15px;
         padding-bottom: 450px; */
