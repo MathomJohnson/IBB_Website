@@ -10,7 +10,7 @@ body{
 	font-size: 16px;
 	line-height: 1.8;
 	font-weight: normal;
-	background: #f8f9fd;
+	background: #9B0000;
 	color: lighten($black,50%);
 }
 a {
@@ -66,6 +66,7 @@ h1, h2, h3, h4, h5,
   position: relative;
   margin: 20px auto;
   background: $primary;
+  box-shadow: 20px 20px 10px black;
 }
 
 /*  Events display */
@@ -130,7 +131,7 @@ h1, h2, h3, h4, h5,
   margin: 0 auto; 
   height: 100%;
   width: 50%;
-  background: #fff;
+  background: #e1d7cb;
   font: 13px Helvetica, Arial, san-serif; 
   display: inline-block; 
   padding: 20px;

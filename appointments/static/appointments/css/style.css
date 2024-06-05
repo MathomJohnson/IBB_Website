@@ -1,3 +1,4 @@
+
 /*!
  * Bootstrap v4.3.1 (https://getbootstrap.com/)
  * Copyright 2011-2019 The Bootstrap Authors
@@ -57,7 +58,7 @@ body {
   line-height: 1.5;
   color: #212529;
   text-align: left;
-  background-color: #fff; }
+  background-color: #9B0000; }
 
 [tabindex="-1"]:focus {
   outline: 0 !important; }
@@ -8187,11 +8188,12 @@ h1, h2, h3, h4, h5,
   height: 500px;
   position: relative;
   margin: 20px auto;
-  background: #7e0cf5; }
+  background: #7e0cf5; 
+  box-shadow: 20px 20px 20px black; }
 
 /*  Events display */
 .events-container {
-  background-color: #c4050c;
+  background-color: #e1d7cb;
   overflow-y: scroll;
   height: 100%;
   width: 50%;
@@ -8249,7 +8251,7 @@ h1, h2, h3, h4, h5,
   margin: 0 auto;
   height: 100%;
   width: 50%;
-  background: #fff;
+  background: #e1d7cb;
   font: 13px Helvetica, Arial, san-serif;
   display: inline-block;
   padding: 20px;
