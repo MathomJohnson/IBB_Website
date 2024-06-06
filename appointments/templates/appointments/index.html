@@ -13,6 +13,9 @@
 {% endblock %}
 
 {% block content %}
+	{% if username %}
+		<center><h3 style="color: #e1d7cb">Thanks {{username}}! Check your inbox for the meeting link.</h3></center>
+	{% endif %}
 	<section class="ftco-section">
 		<div class="container">
 			<div class="row">
@@ -112,6 +115,7 @@
 						{% csrf_token %}
 						<input type="hidden" id="modal-mentor-hidden-input" name="mentor" value="">
 						<input type="hidden" id="modal-event-id-hidden-input" name="event-id" value="">
+						<input type="hidden" id="modal-user-id-hidden-input" name="user-id" value="{{ user.id }}">
 						<p>Email:</p>
 						<input id="modal-email-field" type="text" name="user_email" value="{{ user_email }}" style="width: 250px;">
 						<p>Topic:</p>

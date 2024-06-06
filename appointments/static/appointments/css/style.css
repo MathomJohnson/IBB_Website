@@ -8183,12 +8183,12 @@ h1, h2, h3, h4, h5,
 .content {
   overflow: none;
   width: 100%;
-  max-width: 790px;
+  max-width: 920px;
   padding: 0px 0;
   height: 500px;
   position: relative;
   margin: 20px auto;
-  background: #7e0cf5; 
+  background: #e1d7cb; 
   box-shadow: 20px 20px 20px black; }
 
 /*  Events display */
@@ -8196,7 +8196,7 @@ h1, h2, h3, h4, h5,
   background-color: #e1d7cb;
   overflow-y: scroll;
   height: 100%;
-  width: 50%;
+  width: 55%;
   float: right;
   margin: 0px auto;
   display: inline-block;
@@ -8250,7 +8250,7 @@ h1, h2, h3, h4, h5,
   position: relative;
   margin: 0 auto;
   height: 100%;
-  width: 50%;
+  width: 45%;
   background: #e1d7cb;
   font: 13px Helvetica, Arial, san-serif;
   display: inline-block;
@@ -8416,7 +8416,7 @@ h1, h2, h3, h4, h5,
   position: relative; }
 
 .table-date:not(.nil):hover {
-  border-color: #cd4dcc; }
+  border-color: #28a745; }
 
 .event-date {
   border-color: #c4050c;
@@ -8431,20 +8431,22 @@ h1, h2, h3, h4, h5,
     border-radius: 50%;
     content: '';
     background: #28a745; }
-
+    
 .active-date {
   background: #dfc2a0;
   color: black; }
 
 .event-date.active-date {
-  background: #c4050c; }
+  background: #c4050c;
+  color: #fff;
+  border-color: #28a745 }
 
 /* input dialog */
 .dialog {
   z-index: 5;
   background: #c4050c;
   position: absolute;
-  width: 50%;
+  width: 55%;
   height: 500px;
   top: 0;
   right: 0;

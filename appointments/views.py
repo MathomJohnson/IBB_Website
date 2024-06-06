@@ -4,7 +4,8 @@ from .forms import NewAppointment
 from django.core.mail import send_mail
 from django.conf import settings
 import json
-from .models import Meeting, GoogleToken
+from .models import Meeting, GoogleToken, ScheduledMeeting
+from django.contrib.auth.models import User
 import os
 from dotenv import load_dotenv
 import requests
@@ -147,6 +148,7 @@ def setup_google_meet(request):
         topic = request.POST.get("topic").strip()
         mentor = request.POST.get("mentor").strip()
         event_id = request.POST.get("event-id")
+        user_id = request.POST.get("user-id")
         #club_email = os.getenv('EMAIL_HOST_USER')
 
         event = Meeting.objects.get(id=event_id)
@@ -164,6 +166,10 @@ def setup_google_meet(request):
         dt_end = dt_start + timedelta(minutes=30)
         iso_format_end = dt_end.strftime('%Y-%m-%dT%H:%M:%S')
         iso_format_end += "-05:00"
+
+        # Add a scheduled meeting object since this meeting is now official
+        scheduled_event = ScheduledMeeting(user_id=user_id, datetime_scheduled=dt_start)
+        scheduled_event.save()
         
         # get token and refresh it if it is expired
         token = GoogleToken.objects.get(id=1)
@@ -221,7 +227,9 @@ def setup_google_meet(request):
         )
 
 
-        return HttpResponseRedirect("/")
+        return render(request, "appointments/index.html", {
+            "username":User.objects.get(id=user_id).username
+        })
 
 
 def refresh_if_needed(token):

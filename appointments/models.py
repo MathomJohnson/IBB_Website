@@ -13,6 +13,13 @@ class Meeting(models.Model):
     def __str__(self):
         return self.mentor+" at "+str(self.time)+" on "+str(self.month)+"/"+str(self.day)+"/"+str(self.year)+". Cancelled: "+str(self.cancelled)
 
+class ScheduledMeeting(models.Model):
+    user_id = models.IntegerField()
+    datetime_scheduled = models.DateTimeField()
+
+    def __str__(self):
+        return "User #" + str(self.user_id) + " has a meeting scheduled"
+
 class GoogleToken(models.Model):
     id = models.AutoField(primary_key=True)
     access_token = models.CharField(max_length=800)
