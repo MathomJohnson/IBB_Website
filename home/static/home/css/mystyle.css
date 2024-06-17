@@ -4,13 +4,17 @@
     padding: 0;
     display: flex;
     justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #f5f5f5;
+    margin-top:7%;
+    /*min-height: 100vh;*/
+    background-color: #9B0000;
+}
+
+#div_id_username {
+    margin-bottom:20px;
 }
 
 .form-container {
-    background-color: white;
+    background-color: #e1d7cb;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);

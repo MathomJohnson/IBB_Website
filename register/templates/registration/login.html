@@ -12,10 +12,10 @@
                 {% csrf_token %}
                 {{ form|crispy }}
                 <br>
-                <button type="submit" class="btn btn-success">Login</button>
+                <button type="submit" class="btn btn-primary">Login</button>
+                <p style="color:#333333; margin-bottom:0px; margin-top:20px;">Don't have an account? Get started <a href="/register/">here</a>.</p>
             </form>
-            <br>
-            <p>Don't have an account? Get started <a href="/register/">here</a>.</p>
+            
         </div>
     </div>
   

@@ -90,8 +90,8 @@ def google_login(request):
     flow = Flow.from_client_config(
         client_config={
             "web": {
-                "client_id": "",
-                "client_secret": "",
+                "client_id": os.getenv("GOOGLE_CLIENT_ID"),
+                "client_secret": os.getenv("GOOGLE_CLIENT_SECRET"),
                 "redirect_uris": ["http://localhost:8000/calendar/oauth2callback"],
                 "auth_uri": "https://accounts.google.com/o/oauth2/auth",
                 "token_uri": "https://oauth2.googleapis.com/token",
@@ -115,8 +115,8 @@ def oauth2callback(request):
     flow = Flow.from_client_config(
         client_config={
             "web": {
-                "client_id": "",
-                "client_secret": "",
+                "client_id": os.getenv("GOOGLE_CLIENT_ID"),
+                "client_secret": os.getenv("GOOGLE_CLIENT_SECRET"),
                 "redirect_uris": ["http://localhost:8000/calendar/oauth2callback"],
                 "auth_uri": "https://accounts.google.com/o/oauth2/auth",
                 "token_uri": "https://oauth2.googleapis.com/token",
@@ -181,7 +181,7 @@ def setup_google_meet(request):
             token_uri="https://oauth2.googleapis.com/token",
             client_id=os.getenv("GOOGLE_CLIENT_ID"),
             client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
-            #scopes=token_data.scopes.split(",")
+            #scopes=token.scopes.split(",")
         )
 
         service = build('calendar', 'v3', credentials=credentials)
@@ -209,7 +209,7 @@ def setup_google_meet(request):
         }
 
         event = service.events().insert(
-            calendarId='internationalbadgerbonds@gmail.com',
+            calendarId='primary',
             body=event,
             conferenceDataVersion=1,
         ).execute()
@@ -233,32 +233,32 @@ def setup_google_meet(request):
 
 
 def refresh_if_needed(token):
-    if datetime.now(pytz.UTC) >= token.expiration:
-        client_id = os.getenv("GOOGLE_CLIENT_ID")
-        client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
-        token_uri = "https://oauth2.googleapis.com/token"
+    #if datetime.now(pytz.UTC) >= token.expiration:
+    client_id = os.getenv("GOOGLE_CLIENT_ID")
+    client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
+    token_uri = "https://oauth2.googleapis.com/token"
 
-        data = {
-            'client_id': client_id,
-            'client_secret': client_secret,
-            'refresh_token': token.refresh_token,
-            'grant_type': 'refresh_token',
-        }
+    data = {
+        'client_id': client_id,
+        'client_secret': client_secret,
+        'refresh_token': token.refresh_token,
+        'grant_type': 'refresh_token',
+    }
 
-        response = requests.post(token_uri, data=data)
+    response = requests.post(token_uri, data=data)
 
-        if response.status_code == 200:
-            tokens = response.json()
-            expiration = datetime.now(pytz.UTC) + timedelta(seconds=tokens['expires_in'])
-            new_access_token = tokens['access_token']
-            token.access_token = new_access_token
-            token.expiration = expiration
-            token.save()
-            return new_access_token
-        else:
-            raise Exception("Failed to refresh access token: " + response.text)
+    if response.status_code == 200:
+        tokens = response.json()
+        expiration = datetime.now(pytz.UTC) + timedelta(seconds=tokens['expires_in'])
+        new_access_token = tokens['access_token']
+        token.access_token = new_access_token
+        token.expiration = expiration
+        token.save()
+        return new_access_token
     else:
-        return token.access_token
+        raise Exception("Failed to refresh access token: " + response.text)
+    #else:
+        #return token.access_token
 
 
 

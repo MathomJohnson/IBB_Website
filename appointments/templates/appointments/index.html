@@ -14,7 +14,20 @@
 
 {% block content %}
 	{% if username %}
-		<center><h3 style="color: #e1d7cb">Thanks {{username}}! Check your inbox for the meeting link.</h3></center>
+		<!--<center><h3 style="color: #e1d7cb">Thanks {{username}}! Check your inbox for the meeting link.</h3></center>
+		<div class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+			<div class="d-flex">
+			  <div class="toast-body">
+				Hello, world! This is a toast message.
+			  </div>
+			  <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close">HI</button>
+			</div>
+		  </div>-->
+		<div class="alert-container">
+			<div class="alert alert-light" role="alert">
+				Thanks {{ username }}! Check your inbox for the meeting link.
+			</div>
+		</div>
 	{% endif %}
 	<section class="ftco-section">
 		<div class="container">
@@ -116,9 +129,9 @@
 						<input type="hidden" id="modal-mentor-hidden-input" name="mentor" value="">
 						<input type="hidden" id="modal-event-id-hidden-input" name="event-id" value="">
 						<input type="hidden" id="modal-user-id-hidden-input" name="user-id" value="{{ user.id }}">
-						<p>Email:</p>
+						<p class="email-tag">Email:</p>
 						<input id="modal-email-field" type="text" name="user_email" value="{{ user_email }}" style="width: 250px;">
-						<p>Topic:</p>
+						<p class="topic-tag">Topic:</p>
 						<textarea id="modal-topic-field" name="topic" rows="4" cols="54">Describe what you would like to discuss...</textarea>
 						<br>
 					</form>
@@ -129,7 +142,7 @@
 				{% if user.is_authenticated %}
 				<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-				<button type="button" class="btn btn-primary" onclick="submitForm()">Save changes</button>
+				<button type="button" class="btn btn-primary" onclick="submitForm()">Submit</button>
 				</div>
 				{% endif %}
 		</div>

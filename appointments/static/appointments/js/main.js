@@ -246,13 +246,13 @@ function show_events(events, month, day, year) {
             let newTime = hour + ":" + minute + " " + period;
 
             var event_card = $("<div class='event-card'></div>");
-            var event_name = $("<div class='event-name' style='margin-right: 8px;'>Mentor: "+events[i]["mentor"]+" "+events[i].id+"</div>");
-            var event_start = $("<div class='event-count'>Time: "+newTime+"</div>");
-            var meet_button = $("<button type='button' class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#meetModal' data-mentor-name='"+events[i]["mentor"]+"' data-event-id='"+events[i].id+"'>Meet</button>");
+            var event_name = $("<div class='event-name' style='margin-right: 8px;'><b>Mentor:</b> "+events[i]["mentor"]+"</div>");
+            var event_start = $("<div class='event-count'><b>Time:</b> "+newTime+"</div>");
+            var meet_button = $("<button type='button' class='meet-button btn btn-primary' data-bs-toggle='modal' data-bs-target='#meetModal' data-mentor-name='"+events[i]["mentor"]+"' data-event-id='"+events[i].id+"'>Meet</button>");
 
             // Delete Event Handler only displays if user is staff
             if (auth === "True") {
-                var event_delete_button = $("<button class='delete-event-button btn btn-danger' data-event-id='"+ events[i].id +"'>Delete</button>");
+                var event_delete_button = $("<button class='meet-button delete-event-button btn btn-danger' data-event-id='"+ events[i].id +"'>Delete</button>");
                 // Add click event handler for the delete button
                 event_delete_button.on("click", function() {
                     console.log("is authenticated: " + typeof auth)
