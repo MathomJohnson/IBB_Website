@@ -181,7 +181,6 @@ def setup_google_meet(request):
             token_uri="https://oauth2.googleapis.com/token",
             client_id=os.getenv("GOOGLE_CLIENT_ID"),
             client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
-            #scopes=token.scopes.split(",")
         )
 
         service = build('calendar', 'v3', credentials=credentials)
@@ -214,16 +213,23 @@ def setup_google_meet(request):
             conferenceDataVersion=1,
         ).execute()
 
+        # Format the time for the email
+        time_obj = datetime.strptime(str(time), "%H:%M:%S")
+        formatted_time = time_obj.strftime("%I:%M %p")
+
+        # Get the mentors email from the mentor-email_dict
+        mentor_email = mentor_email_dict[mentor]
+
         # Send email to mentee with the meeting link
         meeting_link = event['hangoutLink']
         send_mail(
             'Mentor Meeting Scheduled',
-            'Google Meet with ' + mentor + " scheduled for " + str(month)+"/"+str(day)+"/"+str(year) + " at " + str(time) + ".\n"
+            'Google Meet with ' + mentor + " scheduled for " + str(month)+"/"+str(day)+"/"+str(year) + " at " + formatted_time + " (Chicago Time).\n\n"
             + "The link to this Google Meet is: " + meeting_link 
-            + "\nTo cancel this meeting, delete the event from your Google Calendar or mark your attendence as \"No\""
-            + "\nTopic of the meeting: " + topic,
+            + "\n\nTo cancel this meeting, delete the event from your Google Calendar or mark your attendence as \"No\""
+            + "\n\nTopic of the meeting: " + topic,
             os.getenv("EMAIL_HOST_USER"),
-            [user_email, "mathomjohnson57@gmail.com"],
+            [user_email, mentor_email],
         )
 
 
@@ -260,7 +266,10 @@ def refresh_if_needed(token):
     #else:
         #return token.access_token
 
-
+mentor_email_dict = {
+    "Ojasvini Sharma": "mgjohnson8@wisc.edu",
+    "Shashandra Suresh": "mathomjohnson57@gmail.com",
+}
 
 
 

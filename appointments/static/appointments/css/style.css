@@ -8190,6 +8190,13 @@ h1, h2, h3, h4, h5,
   margin: 20px auto;
   background: #e1d7cb; 
   box-shadow: 20px 20px 20px black; }
+  @media (max-width: 767.98px) {
+    .content {
+      box-shadow: none;
+      max-width:380px;
+      width:100%;
+    }
+  }
 
 /*  Events display */
 .events-container {
@@ -8204,29 +8211,41 @@ h1, h2, h3, h4, h5,
   border-bottom-right-radius: 3px;
   border-top-right-radius: 3px;
   padding: 0; }
+  @media (max-width: 991.98px) {
+    .events-container {
+      width: 55%;
+      text-align:center;
+      height: auto; } }
   @media (max-width: 767.98px) {
     .events-container {
-      width: 100%;
-      height: auto; } }
+      width: 100%; } }
 
 .events-container:after {
   clear: both; }
 
 .event-card {
   padding: 30px;
+  padding-left:0px;
   max-width: 100%;
   display: block;
   background: #e1d7cb;
   /*border: none !important;*/
   margin-left: 25px;
-  border-bottom: 2px solid #c4050c; }
+  border-bottom: 2px solid #c4050c;
+  border-left: none !important; }
   @media (max-width: 991.98px) {
     .event-card {
+      padding:10px;
       margin: 10px; } }
   @media (max-width: 767.98px) {
     .event-card {
+      border-top: 2px solid #c4050c;
+      border-bottom:none;
       margin: 0;
-      background: #e6e6e6; } }
+      padding:15px 0px 15px 0px;
+      background: #e1d7cb; 
+      height: 100%;
+      text-align:center; } }
 
 .event-count, .event-name, .event-cancelled {
   display: inline;
@@ -8247,9 +8266,9 @@ h1, h2, h3, h4, h5,
   text-align: right; }
 
 /* Meet button */
-.meet-button {
-  float: right;
-}
+@media (min-width: 991.98px) {
+  .meet-button {
+    float: right; } }
 
 /* Modal Style */
 .modal-content {
@@ -8297,6 +8316,7 @@ h1, h2, h3, h4, h5,
   margin: 0 auto;
   height: 100%;
   width: 45%;
+  padding-top: 75%;
   background: #e1d7cb;
   font: 13px Helvetica, Arial, san-serif;
   display: inline-block;
@@ -8304,18 +8324,19 @@ h1, h2, h3, h4, h5,
   float: left; }
   @media (max-width: 991.98px) {
     .calendar-container {
+      width:45%;
       padding: 0; } }
   @media (max-width: 767.98px) {
     .calendar-container {
       padding: 0;
-      width: 100%; } }
+      width: 100%; 
+      height:100%;} }
 
 .calendar-container:after {
   clear: both; }
 
 .calendar {
-  width: 100%;
-  padding: 0; }
+  width: 100%; }
 
 /* Calendar Header */
 .year-header {
