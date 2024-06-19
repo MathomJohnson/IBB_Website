@@ -8190,6 +8190,12 @@ h1, h2, h3, h4, h5,
   margin: 20px auto;
   background: #e1d7cb; 
   box-shadow: 20px 20px 20px black; }
+  @media (max-width: 991.98px) {
+    .content {
+      margin: 0px;
+      padding: 0px;
+      box-shadow: none;
+      height:490px; }}
   @media (max-width: 767.98px) {
     .content {
       box-shadow: none;
@@ -8287,6 +8293,10 @@ h1, h2, h3, h4, h5,
   margin-bottom:4px;
   font-weight: bold;
 }
+@media (max-width: 991.98px) {
+#modal-topic-field {
+  width:21em;
+} } 
 #modal-email-field {
   margin-bottom: 20px;
 }
