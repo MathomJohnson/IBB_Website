@@ -151,124 +151,150 @@ def setup_google_meet(request):
         user_id = request.POST.get("user-id")
         #club_email = os.getenv('EMAIL_HOST_USER')
 
-        event = Meeting.objects.get(id=event_id)
-        day = event.day
-        month = event.month
-        year = event.year
-        time = str(event.time)
-        event.delete()
+        meet_event = Meeting.objects.get(id=event_id)
+        day = meet_event.day
+        month = meet_event.month
+        year = meet_event.year
+        time = str(meet_event.time)
 
-        #create iso formatted date/time
-        hour, minute, second = map(int, time.split(":"))
-        dt_start = datetime(year, month, day, hour, minute, second)
-        iso_format_start = dt_start.strftime('%Y-%m-%dT%H:%M:%S')
-        iso_format_start += "-05:00"
-        dt_end = dt_start + timedelta(minutes=30)
-        iso_format_end = dt_end.strftime('%Y-%m-%dT%H:%M:%S')
-        iso_format_end += "-05:00"
+        if eligible_for_meeting(user_id):
 
-        # Add a scheduled meeting object since this meeting is now official
-        scheduled_event = ScheduledMeeting(user_id=user_id, datetime_scheduled=dt_start)
-        scheduled_event.save()
-        
-        # get token and refresh it if it is expired
-        token = GoogleToken.objects.get(id=1)
-        access_token = refresh_if_needed(token)
+            #create iso formatted date/time
+            hour, minute, second = map(int, time.split(":"))
+            dt_start = datetime(year, month, day, hour, minute, second)
+            iso_format_start = dt_start.strftime('%Y-%m-%dT%H:%M:%S')
+            iso_format_start += "-05:00"
+            dt_end = dt_start + timedelta(minutes=30)
+            iso_format_end = dt_end.strftime('%Y-%m-%dT%H:%M:%S')
+            iso_format_end += "-05:00"
+            
+            # get token and refresh it if it is expired
+            token = GoogleToken.objects.get(id=1)
+            access_token = refresh_if_needed(token)
 
-        credentials = Credentials(
-            token=access_token,
-            refresh_token=token.refresh_token,
-            token_uri="https://oauth2.googleapis.com/token",
-            client_id=os.getenv("GOOGLE_CLIENT_ID"),
-            client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
-        )
+            credentials = Credentials(
+                token=access_token,
+                refresh_token=token.refresh_token,
+                token_uri="https://oauth2.googleapis.com/token",
+                client_id=os.getenv("GOOGLE_CLIENT_ID"),
+                client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
+            )
 
-        service = build('calendar', 'v3', credentials=credentials)
+            service = build('calendar', 'v3', credentials=credentials)
 
-        event = {
-            'summary': 'Meeting with '+mentor,
-            'description': topic,
-            'start': {
-                'dateTime': iso_format_start,
-                'timeZone': 'America/Chicago',
-            },
-            'end': {
-                'dateTime': iso_format_end,
-                'timeZone': 'America/Chicago',
-            },
-            'conferenceData': {
-                'createRequest': {
-                    'requestId': 'some-random-string'
-                }
-            },
-            'attendees': [
-                {'email': user_email},
-                {'email': 'mathomjohnson57@gmail.com'},
-            ],
-        }
+            event = {
+                'summary': 'Meeting with '+mentor,
+                'description': topic,
+                'start': {
+                    'dateTime': iso_format_start,
+                    'timeZone': 'America/Chicago',
+                },
+                'end': {
+                    'dateTime': iso_format_end,
+                    'timeZone': 'America/Chicago',
+                },
+                'conferenceData': {
+                    'createRequest': {
+                        'requestId': 'some-random-string'
+                    }
+                },
+                'attendees': [
+                    {'email': user_email},
+                    {'email': 'mathomjohnson57@gmail.com'},
+                ],
+            }
 
-        event = service.events().insert(
-            calendarId='primary',
-            body=event,
-            conferenceDataVersion=1,
-        ).execute()
+            event = service.events().insert(
+                calendarId='primary',
+                body=event,
+                conferenceDataVersion=1,
+            ).execute()
 
-        # Format the time for the email
-        time_obj = datetime.strptime(str(time), "%H:%M:%S")
-        formatted_time = time_obj.strftime("%I:%M %p")
+            # Format the time for the email
+            time_obj = datetime.strptime(str(time), "%H:%M:%S")
+            formatted_time = time_obj.strftime("%I:%M %p")
 
-        # Get the mentors email from the mentor-email_dict
-        mentor_email = mentor_email_dict[mentor]
+            # Get the mentors email from the mentor-email_dict
+            mentor_email = mentor_email_dict[mentor]
 
-        # Send email to mentee with the meeting link
-        meeting_link = event['hangoutLink']
-        send_mail(
-            'Mentor Meeting Scheduled',
-            'Google Meet with ' + mentor + " scheduled for " + str(month)+"/"+str(day)+"/"+str(year) + " at " + formatted_time + " (Chicago Time).\n\n"
-            + "The link to this Google Meet is: " + meeting_link 
-            + "\n\nTo cancel this meeting, delete the event from your Google Calendar or mark your attendence as \"No\""
-            + "\n\nTopic of the meeting: " + topic,
-            os.getenv("EMAIL_HOST_USER"),
-            [user_email, mentor_email],
-        )
+            # Send email to mentee with the meeting link
+            meeting_link = event['hangoutLink']
+            send_mail(
+                'Mentor Meeting Scheduled',
+                'Google Meet with ' + mentor + " scheduled for " + str(month)+"/"+str(day)+"/"+str(year) + " at " + formatted_time + " (Chicago Time).\n\n"
+                + "The link to this Google Meet is: " + meeting_link 
+                + "\n\nTo cancel this meeting, delete the event from your Google Calendar or mark your attendence as \"No\""
+                + "\n\nTopic of the meeting: " + topic,
+                os.getenv("EMAIL_HOST_USER"),
+                [user_email, mentor_email],
+            )
+
+            # Delete the event from available meetings since it has been taken
+            meet_event.delete()
+
+            # Add a scheduled meeting object since this meeting is now official
+            scheduled_event = ScheduledMeeting(user_id=user_id, datetime_scheduled=dt_start)
+            scheduled_event.save()
 
 
-        return render(request, "appointments/index.html", {
-            "username":User.objects.get(id=user_id).username
-        })
+            return render(request, "appointments/index.html", {
+                "username":User.objects.get(id=user_id).username
+            })
+        else:
+            return render(request, "appointments/index.html", {
+                "username":"loser pants!!"
+            })
+
+# Returns true if the user is not already signed up for a future meeting
+# Returns false otherwise
+def eligible_for_meeting(user_id):
+    try:
+        scheduled_meeting = ScheduledMeeting.objects.get(user_id=user_id)
+        if datetime.now(pytz.UTC) > scheduled_meeting.datetime_scheduled:
+            scheduled_meeting.delete()
+            print("11111111111111111111111111")
+            return True
+        else:
+            print("2222222222222222222222")
+            return False
+    except ScheduledMeeting.DoesNotExist:
+        print("333333333333333333333333")
+        return True
+
 
 
 def refresh_if_needed(token):
-    #if datetime.now(pytz.UTC) >= token.expiration:
-    client_id = os.getenv("GOOGLE_CLIENT_ID")
-    client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
-    token_uri = "https://oauth2.googleapis.com/token"
+    if datetime.now(pytz.UTC) >= token.expiration:
+        client_id = os.getenv("GOOGLE_CLIENT_ID")
+        client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
+        token_uri = "https://oauth2.googleapis.com/token"
 
-    data = {
-        'client_id': client_id,
-        'client_secret': client_secret,
-        'refresh_token': token.refresh_token,
-        'grant_type': 'refresh_token',
-    }
+        data = {
+            'client_id': client_id,
+            'client_secret': client_secret,
+            'refresh_token': token.refresh_token,
+            'grant_type': 'refresh_token',
+        }
 
-    response = requests.post(token_uri, data=data)
+        response = requests.post(token_uri, data=data)
 
-    if response.status_code == 200:
-        tokens = response.json()
-        expiration = datetime.now(pytz.UTC) + timedelta(seconds=tokens['expires_in'])
-        new_access_token = tokens['access_token']
-        token.access_token = new_access_token
-        token.expiration = expiration
-        token.save()
-        return new_access_token
+        if response.status_code == 200:
+            tokens = response.json()
+            expiration = datetime.now(pytz.UTC) + timedelta(seconds=tokens['expires_in'])
+            new_access_token = tokens['access_token']
+            token.access_token = new_access_token
+            token.expiration = expiration
+            token.save()
+            return new_access_token
+        else:
+            raise Exception("Failed to refresh access token: " + response.text)
     else:
-        raise Exception("Failed to refresh access token: " + response.text)
-    #else:
-        #return token.access_token
+        return token.access_token
 
 mentor_email_dict = {
     "Ojasvini Sharma": "mgjohnson8@wisc.edu",
     "Shashandra Suresh": "mathomjohnson57@gmail.com",
+    "Devansh Gupta": "nobody@gmail.com"
 }
 
 
