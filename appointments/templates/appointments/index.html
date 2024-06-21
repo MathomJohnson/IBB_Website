@@ -13,6 +13,7 @@
 {% endblock %}
 
 {% block content %}
+
 	{% if username %}
 		<div class="alert-container">
 			<div class="alert alert-light" role="alert">
@@ -20,6 +21,15 @@
 			</div>
 		</div>
 	{% endif %}
+	{% if meeting_failed %}
+		<div class="alert-container">
+			<div class="alert alert-danger" role="alert">
+				Error. You cannot schedule more than 1 meeting at a time.
+			</div>
+		</div>
+	{% endif %}
+
+	<h1 class="name-header" style="padding-top:50px;">Mentor Availability</h1>
 	<section class="ftco-section">
 		<div class="container">
 			<div class="row">
@@ -127,7 +137,7 @@
 						<br>
 					</form>
 					{% else %}
-						<p>Please log in <a href='/login/'>here</a> before continuing.</p>
+						<p style="color:#9B0000">Please log in <a href='/login/'>here</a> before continuing.</p>
 					{% endif %}
 				</div>
 				{% if user.is_authenticated %}
@@ -139,6 +149,18 @@
 		</div>
 		</div>
 	</div>
+
+	<!-- FAQ info -->
+	<p class="name-header">
+		FAQs
+		<ul class="name-header">
+			<li>Times are in central time (Chicago)</li>
+			<li>The mentor you choose does not matter (each mentor is great!)</li>
+			<li>After you have signed up for a meeting, check for a confirmation email from us</li>
+			<li>To cancel your meeting delete the event from your Google Calendar or mark your attendence as "No"</li>
+			<li>You cannot schedule a second meeting if the first meeting has not ended</li>
+		</ul>
+	</p>
 
 	<script src="{% static 'appointments/js/jquery.min.js' %}"></script>
 	<script src="{% static 'appointments/js/popper.js' %}"></script>

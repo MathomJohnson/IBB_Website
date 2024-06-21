@@ -63,7 +63,8 @@ def get_events(request):
         events = Meeting.objects.all()
         if year and month and day:
             events = events.filter(year=year, month=month, day=day)
-        
+
+        events = events.order_by('time')
         event_list = list(events.values())
         
         return JsonResponse({'status': 'success', 'events': event_list}, status=200)
@@ -161,9 +162,11 @@ def setup_google_meet(request):
 
             #create iso formatted date/time
             hour, minute, second = map(int, time.split(":"))
-            dt_start = datetime(year, month, day, hour, minute, second)
-            iso_format_start = dt_start.strftime('%Y-%m-%dT%H:%M:%S')
-            iso_format_start += "-05:00"
+            timezone = pytz.timezone('America/Chicago')
+            dt_start = timezone.localize(datetime(year, month, day, hour, minute, second))
+            iso_format_start = dt_start.isoformat()
+            #iso_format_start = dt_start.strftime('%Y-%m-%dT%H:%M:%S')
+            #iso_format_start += "-05:00"
             dt_end = dt_start + timedelta(minutes=30)
             iso_format_end = dt_end.strftime('%Y-%m-%dT%H:%M:%S')
             iso_format_end += "-05:00"
@@ -242,7 +245,7 @@ def setup_google_meet(request):
             })
         else:
             return render(request, "appointments/index.html", {
-                "username":"loser pants!!"
+                "meeting_failed": True
             })
 
 # Returns true if the user is not already signed up for a future meeting

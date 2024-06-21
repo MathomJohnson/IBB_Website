@@ -8163,7 +8163,8 @@ h1, h2, h3, h4, h5,
   background: #7e0cf5 !important; }
 
 .ftco-section {
-  padding: 7em 0; }
+  padding: 1em 0;
+  padding-bottom:0px; }
 
 .ftco-no-pt {
   padding-top: 0; }
@@ -8271,6 +8272,17 @@ h1, h2, h3, h4, h5,
   color: #cd4dcc;
   text-align: right; }
 
+/* Name Header */
+.name-header {
+  color: #e1d7cb;
+  text-align: center;
+  display: block;
+  padding-top:0px;
+  margin-top:0px;
+  text-shadow: 3px 3px 3px rgb(52, 51, 53);
+  font-weight: bold;
+}
+
 /* Meet button */
 @media (min-width: 991.98px) {
   .meet-button {
@@ -8307,6 +8319,15 @@ h1, h2, h3, h4, h5,
 
 /* Alert style */
 .alert-light {
+  display:inline-block;
+  position: absolute;
+  z-index: 1050;  
+  margin-left:auto;
+  margin-right:auto;
+  margin-top:40px;
+}
+
+.alert-danger {
   display:inline-block;
   position: absolute;
   z-index: 1050;  
@@ -8500,15 +8521,7 @@ h1, h2, h3, h4, h5,
   border-color: #c4050c;
   background: #c4050c;
   color: #fff; }
-  .event-date:after {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    content: '';
-    background: #28a745; }
+  
     
 .active-date {
   background: #dfc2a0;

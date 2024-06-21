@@ -33,7 +33,12 @@ function init_calendar(date) {
     var first_day = date.getDay();
     // 35+firstDay is the number of date elements to be added to the dates table
     // 35 is from (7 days in a week) * (up to 5 rows of dates in a month)
+    $("#loading-screen").css('display', 'flex');
     for(var i=0; i<35+first_day; i++) {
+        // setTimeout(function() {
+        //     // Data fetch completed
+        //     console.log("hey");
+        // }, 3000); // Simulate a 3-second fetch time
         // Since some of the elements will be blank, 
         // need to calculate actual date from index
         var day = i-first_day+1;
@@ -63,6 +68,13 @@ function init_calendar(date) {
             row.append(curr_date);
         }
     }
+    $("#loading-screen").css('display', 'none');
+    // Simulate data fetch and then hide the loading screen
+    // setTimeout(function() {
+    //     console.log("hey");
+    //     $("#loading-screen").hide();
+    // }, 3000); // Simulate a 3-second fetch time
+    //$("#loading-screen").hide();
     // Append the last row and set the current year
     calendar_days.append(row);
     $(".year").text(year);
