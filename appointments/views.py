@@ -32,7 +32,6 @@ def calendar(request):
 
 
 
-#@csrf_exempt  # Only use this for development, for production use proper CSRF handling
 def add_event(request):
     if request.method == 'POST':
         try:
@@ -100,7 +99,7 @@ def google_login(request):
         },
         scopes=['https://www.googleapis.com/auth/calendar'],
     )
-    flow.redirect_uri = "http://localhost:8000/calendar/oauth2callback"
+    flow.redirect_uri = "http://localhost:8000/calendar/oauth2callback" #change for deployment
 
     authorization_url, state = flow.authorization_url(
         access_type='offline',
@@ -141,6 +140,12 @@ def oauth2callback(request):
     print(credentials.token_uri)
     print(credentials.expiry)
 
+    token = GoogleToken.objects.get(id=1)
+    token.access_token = credentials.token
+    token.refresh_token = credentials.refresh_token
+    token.expiration = datetime.now(pytz.UTC)
+    token.save()
+
     return HttpResponseRedirect("/")
 
 def setup_google_meet(request):
@@ -170,6 +175,9 @@ def setup_google_meet(request):
             dt_end = dt_start + timedelta(minutes=30)
             iso_format_end = dt_end.strftime('%Y-%m-%dT%H:%M:%S')
             iso_format_end += "-05:00"
+
+            # Get the mentors email from the mentor-email_dict
+            mentor_email = mentor_email_dict[mentor]
             
             # get token and refresh it if it is expired
             token = GoogleToken.objects.get(id=1)
@@ -203,7 +211,7 @@ def setup_google_meet(request):
                 },
                 'attendees': [
                     {'email': user_email},
-                    {'email': 'mathomjohnson57@gmail.com'},
+                    {'email': mentor_email},
                 ],
             }
 
@@ -216,9 +224,6 @@ def setup_google_meet(request):
             # Format the time for the email
             time_obj = datetime.strptime(str(time), "%H:%M:%S")
             formatted_time = time_obj.strftime("%I:%M %p")
-
-            # Get the mentors email from the mentor-email_dict
-            mentor_email = mentor_email_dict[mentor]
 
             # Send email to mentee with the meeting link
             meeting_link = event['hangoutLink']
@@ -295,9 +300,12 @@ def refresh_if_needed(token):
         return token.access_token
 
 mentor_email_dict = {
-    "Ojasvini Sharma": "mgjohnson8@wisc.edu",
-    "Shashandra Suresh": "mathomjohnson57@gmail.com",
-    "Devansh Gupta": "nobody@gmail.com"
+    "Ojasvini Sharma": "osharma5@wisc.edu",
+    "Shashandra Suresh": "suresh35@wisc.edu",
+    "Anubhav Choudhery": "choudhery@wisc.edu",
+    "Harshvardhan Singh Rathore": "hvardhan2@wisc.edu",
+    "Ruthika Ajit" : "rajit@wisc.edu",
+    "Garv Pundir" : "gpundir@wisc.edu"
 }
 
 
