@@ -4,6 +4,9 @@
 
 	// Setup the calendar with the current date
 $(document).ready(function(){
+    $("#loading-screen").css('display', 'flex');
+
+    
     var date = new Date();
     var today = date.getDate();
     // Set click handlers for DOM elements
@@ -33,7 +36,9 @@ function init_calendar(date) {
     var first_day = date.getDay();
     // 35+firstDay is the number of date elements to be added to the dates table
     // 35 is from (7 days in a week) * (up to 5 rows of dates in a month)
-    $("#loading-screen").css('display', 'flex');
+    
+    
+    
     for(var i=0; i<35+first_day; i++) {
         // setTimeout(function() {
         //     // Data fetch completed
@@ -68,7 +73,9 @@ function init_calendar(date) {
             row.append(curr_date);
         }
     }
-    $("#loading-screen").css('display', 'none');
+    setTimeout(function() {
+        $("#loading-screen").css('display', 'none');
+    }, 3000);
     // Simulate data fetch and then hide the loading screen
     // setTimeout(function() {
     //     console.log("hey");
