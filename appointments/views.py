@@ -58,8 +58,22 @@ def get_events(request):
         year = request.GET.get('year')
         month = request.GET.get('month')
         day = request.GET.get('day')
-        
+
+        time = datetime.now(pytz.timezone('America/Chicago'))
+        timezone = pytz.timezone('America/Chicago')
+        current_datetime = timezone.localize(datetime(time.year, time.month, time.day, time.hour, time.minute, time.second))
+
         events = Meeting.objects.all()
+
+        # Delete events which are expired
+        for event in events:
+            event_datetime = timezone.localize(datetime(event.year, event.month, event.day, int(event.time.hour), int(event.time.minute), int(event.time.second)))
+            print("#######################!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            print("event: " + str(event_datetime) + "vs now: " + str(current_datetime))
+            if current_datetime > event_datetime:
+                print("DELETING")
+                event.delete()
+
         if year and month and day:
             events = events.filter(year=year, month=month, day=day)
 
@@ -309,139 +323,3 @@ mentor_email_dict = {
     "Garv Pundir" : "gpundir@wisc.edu",
     "Mathom Johnson" : "mathomgj@gmail.com"
 }
-
-
-
-
-
-
-
-def setup_meeting(request):
-    if request.method == "POST":
-        user_email = request.POST.get("user_email").strip()
-        topic = request.POST.get("topic").strip()
-        mentor = request.POST.get("mentor").strip()
-        event_id = request.POST.get("event-id")
-        #club_email = os.getenv('EMAIL_HOST_USER')
-
-
-        event = Meeting.objects.get(id=event_id)
-        event.delete()
-
-        #####################
-        try:
-            access_token = os.getenv("ZOOM_ACCESS_TOKEN")
-            refresh_token = os.getenv("ZOOM_REFRESH_TOKEN")
-
-
-            token_url = 'https://zoom.us/oauth/token'
-            payload = {
-                'grant_type': 'refresh_token',
-                'refresh_token': refresh_token,
-                'client_id': "2ffE_XoiQomWyzT8rOGoA",
-                'client_secret': "72BV5V6aWwB5YKh2U2owwsPK38U1qNL4"
-            }
-
-            response = requests.post(token_url, data=payload)
-            response_data = response.json()
-
-            if response.status_code == 200:
-                new_access_token = response_data['access_token']
-                #token_data.refresh_token = response_data['refresh_token']
-                print("******************************")
-                print(new_access_token)
-            else:
-                raise Exception("Failed to refresh token: " + response_data.get('error', 'Unknown error'))
-        except Exception as e:
-            raise Exception("Error refreshing token: " + str(e))
-        #####################
-
-        create_meeting_url = 'https://api.zoom.us/v2/users/internationalbadgerbonds@gmail.com/meetings'
-    
-        headers = {
-            'Authorization': f'Bearer {new_access_token}',
-            'Content-Type': 'application/json'
-        }
-        meeting_details = {
-            "topic": "My Meeting",
-            "type": 2,
-            "start_time": "2024-06-23T10:00:00Z",  # Replace with actual start time
-            "duration": 60,
-            "timezone": "UTC",
-            "password": "123456",
-            "agenda": "Discuss project updates",
-            "settings": {
-                "host_video": True,
-                "participant_video": False,
-                "join_before_host": True,
-                "mute_upon_entry": False,
-                "watermark": False,
-                "use_pmi": False,
-                "approval_type": 2,
-                "audio": "both",
-                "auto_recording": "cloud",
-            }
-        }
-
-        response = requests.post(create_meeting_url, headers=headers, data=json.dumps(meeting_details))
-
-        if response.status_code == 201:
-            meeting_info = response.json()
-            print(meeting_info)
-            return HttpResponseRedirect('/calendar/')
-        else:
-            return HttpResponse(f"Failed to create meeting: {response.content}", status=response.status_code)
-
-        #####################
-
-
-        #Email code here
-        # send_mail(
-        #     'Meeting on ',
-        #     'content',
-        #     club_email,
-        #     [user_email],
-        # )
-
-        
-    
-
-# def zoom_callback(request):
-#     code = request.GET.get('code')
-#     if not code:
-#         return HttpResponse("Error: No code parameter found in the callback.", status=400)
-
-#     # Exchange the authorization code for an access token
-#     token_url = 'https://zoom.us/oauth/token'
-#     client_id = ''
-#     client_secret = ''
-#     redirect_uri = 'http://localhost:8000/calendar/zoom/'
-
-#     payload = {
-#         'grant_type': 'authorization_code',
-#         'code': code,
-#         'redirect_uri': redirect_uri
-#     }
-
-#     # Use HTTPBasicAuth to encode the client ID and secret
-#     auth = HTTPBasicAuth(client_id, client_secret)
-
-#     response = requests.post(token_url, data=payload, auth=auth)
-
-#     # Debugging: Print the response content to see if there's an error message
-#     print("Response status code:", response.status_code)
-#     print("Response content:", response.content)
-
-#     if response.status_code == 200:
-#         token_data = response.json()
-#         access_token = token_data.get('access_token')
-#         refresh_token = token_data.get('refresh_token')
-#         return HttpResponse(f"Access token: {access_token}<br>Refresh token: {refresh_token}")
-#     else:
-#         return HttpResponse(f"Error fetching token: {response.content}", status=response.status_code)
-
-
-# def mentor_zoom_auth(request):
-#     authorization_url = 'https://zoom.us/oauth/authorize?client_id=2ffE_XoiQomWyzT8rOGoA&response_type=code&redirect_uri=http://localhost:8000/calendar/&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fcalendar%2F'
-#     return HttpResponseRedirect(authorization_url)
-
