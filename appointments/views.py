@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from .forms import NewAppointment
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMultiAlternatives
 from django.conf import settings
 import json
 from .models import Meeting, GoogleToken, ScheduledMeeting
@@ -241,16 +241,46 @@ def setup_google_meet(request):
 
             # Send email to mentee with the meeting link
             meeting_link = event['hangoutLink']
-            send_mail(
-                'Mentor Meeting Scheduled',
-                'Google Meet with ' + mentor + " scheduled for " + str(month)+"/"+str(day)+"/"+str(year) + " at " + formatted_time + " (Chicago Time).\n\n"
-                + "The link to this Google Meet is: " + meeting_link 
-                + "\n\nThe PIN to this Google Meet is: 1234"
-                + "\n\nTo cancel this meeting, delete the event from your Google Calendar or mark your attendence as \"No\""
-                + "\n\nTopic of the meeting: " + topic,
-                os.getenv("EMAIL_HOST_USER"),
-                [user_email, mentor_email],
+            # send_mail(
+            #     'Mentor Meeting Scheduled',
+            #     'Google Meet with ' + mentor + " scheduled for " + str(month)+"/"+str(day)+"/"+str(year) + " at " + formatted_time + " (Chicago Time).\n\n"
+            #     + "Link: " + meeting_link 
+            #     + "\n\nIMPORTANT:"
+            #     + "\n\nTo cancel this meeting, delete the event from your Google Calendar or mark your attendence as \"No\""
+            #     + "\n\nTopic of the meeting: " + topic,
+            #     os.getenv("EMAIL_HOST_USER"),
+            #     [user_email, mentor_email],
+            # )
+
+            #Email for mentee
+            subject = 'Mentor Meeting Scheduled'
+            html_content = (
+                f"<p>Google Meet with {mentor} ({mentor_email}) scheduled for <strong>{month}/{day}/{year}</strong> "
+                f"at <strong>{formatted_time} (Chicago Time)</strong>.</p>"
+                f"<p style=\"font-size:18px;\"><strong>IMPORTANT: the link MUST be opened in the browser associated with {user_email} or you will not be allowed into the meeting.</strong></p>"
+                f"<p>Link: <a href='{meeting_link}'>{meeting_link}</a></p>"
+                f"<p>To cancel this meeting, delete the event from your Google Calendar or mark your attendance as \"No\"</p>"
+                f"<p><strong>Topic of the meeting:</strong> {topic}</p>"
             )
+
+            msg = EmailMultiAlternatives(subject, html_content, os.getenv("EMAIL_HOST_USER"), [user_email])
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
+
+            #Email for mentor
+            subject = 'Mentee Meeting Scheduled'
+            html_content = (
+                f"<p>Google Meet with {User.objects.get(id=user_id).username} ({user_email}) scheduled for <strong>{month}/{day}/{year}</strong> "
+                f"at <strong>{formatted_time} (Chicago Time)</strong>.</p>"
+                f"<p style=\"font-size:18px;\"><strong>IMPORTANT: the link MUST be opened in the browser associated with {mentor_email} or you will not be allowed into the meeting.</strong></p>"
+                f"<p>Link: <a href='{meeting_link}'>{meeting_link}</a></p>"
+                f"<p>To cancel this meeting, delete the event from your Google Calendar and manually notify your mentee</p>"
+                f"<p><strong>Topic of the meeting:</strong> {topic}</p>"
+            )
+
+            msg = EmailMultiAlternatives(subject, html_content, os.getenv("EMAIL_HOST_USER"), [mentor_email])
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
 
             # Delete the event from available meetings since it has been taken
             meet_event.delete()

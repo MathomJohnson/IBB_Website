@@ -29,7 +29,16 @@
 		</div>
 	{% endif %}
 
-	<h1 class="name-header" style="padding-top:50px;">Mentor Availability</h1>
+	<!--<h1 class="name-header" style="padding-top:50px;">Mentor Availability</h1>-->
+
+	<!-- FAQ info -->
+	<br><br>
+	<ul class="name-header">
+		<li>TIMEZONE - times are in Central/Chicago time. NOT your device's timezone.</li>
+		<li>CANCEL - delete the event from your Google Calendar or mark your attendance as "No".</li>
+		<li>GOOGLE MEET - you MUST join the meeting through the browser associated with the email that you sign up with.</li>
+	</ul>
+
 	<section class="ftco-section">
 		<div class="container">
 			<div class="row">
@@ -130,7 +139,7 @@
 						<input type="hidden" id="modal-mentor-hidden-input" name="mentor" value="">
 						<input type="hidden" id="modal-event-id-hidden-input" name="event-id" value="">
 						<input type="hidden" id="modal-user-id-hidden-input" name="user-id" value="{{ user.id }}">
-						<p class="email-tag">Email:</p>
+						<p class="email-tag">Email (MUST be a Google account):</p>
 						<input id="modal-email-field" type="text" name="user_email" value="{{ user_email }}" style="width: 250px;">
 						<p class="topic-tag">Topic:</p>
 						<textarea id="modal-topic-field" name="topic" rows="4" cols="54" placeholder="Describe what you would like to discuss..."></textarea>
@@ -149,18 +158,6 @@
 		</div>
 		</div>
 	</div>
-
-	<!-- FAQ info -->
-	<p class="name-header">
-		FAQs
-		<ul class="name-header">
-			<li>Times are in central time (Chicago)</li>
-			<li>The mentor you choose does not matter (each mentor is great!)</li>
-			<li>After you have signed up for a meeting, check for a confirmation email from us</li>
-			<li>To cancel your meeting delete the event from your Google Calendar or mark your attendence as "No"</li>
-			<li>You cannot schedule a second meeting if the first meeting has not ended</li>
-		</ul>
-	</p>
 
 	<script src="{% static 'appointments/js/jquery.min.js' %}"></script>
 	<script src="{% static 'appointments/js/popper.js' %}"></script>
