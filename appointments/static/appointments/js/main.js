@@ -4,8 +4,7 @@
 
 	// Setup the calendar with the current date
 $(document).ready(function(){
-    $("#loading-screen").css('display', 'flex');
-
+    document.getElementById('loading-screen').style.display = 'flex';
     
     var date = new Date();
     var today = date.getDate();
@@ -17,74 +16,79 @@ $(document).ready(function(){
     // Set current month as active
     $(".months-row").children().eq(date.getMonth()).addClass("active-month");
     init_calendar(date);
-    var events = check_events(today, date.getMonth()+1, date.getFullYear());
-    show_events(events, months[date.getMonth()], today, date.getFullYear());
+    document.getElementById('loading-screen').style.display = 'flex';
+    //var events = check_events(today, date.getMonth()+1, date.getFullYear());
+    //show_events(events, months[date.getMonth()], today, date.getFullYear());
 });
 
 // Initialize the calendar by appending the HTML dates
 function init_calendar(date) {
-    $(".tbody").empty();
-    $(".events-container").empty();
-    var calendar_days = $(".tbody");
-    var month = date.getMonth();
-    var year = date.getFullYear();
-    var day_count = days_in_month(month, year);
-    var row = $("<tr class='table-row'></tr>");
-    var today = date.getDate();
-    // Set date to 1 to find the first day of the month
-    date.setDate(1);
-    var first_day = date.getDay();
-    // 35+firstDay is the number of date elements to be added to the dates table
-    // 35 is from (7 days in a week) * (up to 5 rows of dates in a month)
+    console.log("start init...");
+    //$("#loading-screen").css('display', 'flex');
+    document.getElementById('loading-screen').style.display = 'flex';
     
-    
-    
-    for(var i=0; i<35+first_day; i++) {
-        // setTimeout(function() {
-        //     // Data fetch completed
-        //     console.log("hey");
-        // }, 3000); // Simulate a 3-second fetch time
-        // Since some of the elements will be blank, 
-        // need to calculate actual date from index
-        var day = i-first_day+1;
-        // If it is a sunday, make a new row
-        if(i%7===0) {
-            calendar_days.append(row);
-            row = $("<tr class='table-row'></tr>");
-        }
-        // if current index isn't a day in this month, make it blank
-        if(i < first_day || day > day_count) {
-            var curr_date = $("<td class='table-date nil'>"+"</td>");
-            row.append(curr_date);
-        }   
-        else {
-            var curr_date = $("<td class='table-date'>"+day+"</td>");
-            var events = check_events(day, month+1, year);
-            if(today===day && $(".active-date").length===0) {
-                curr_date.addClass("active-date");
-                show_events(events, months[month], day, year);
-            }
-            // If this date has any events, style it with .event-date
-            if(events.length!==0) {
-                curr_date.addClass("event-date");
-            }
-            // Set onClick handler for clicking a date
-            curr_date.click({events: events, month: months[month], day:day}, date_click);
-            row.append(curr_date);
-        }
-    }
     setTimeout(function() {
-        $("#loading-screen").css('display', 'none');
-    }, 3000);
-    // Simulate data fetch and then hide the loading screen
-    // setTimeout(function() {
-    //     console.log("hey");
-    //     $("#loading-screen").hide();
-    // }, 3000); // Simulate a 3-second fetch time
-    //$("#loading-screen").hide();
-    // Append the last row and set the current year
-    calendar_days.append(row);
-    $(".year").text(year);
+        console.log("3 second timeout over...");
+    
+    
+        $(".tbody").empty();
+        $(".events-container").empty();
+        var calendar_days = $(".tbody");
+        var month = date.getMonth();
+        var year = date.getFullYear();
+        var day_count = days_in_month(month, year);
+        var row = $("<tr class='table-row'></tr>");
+        var today = date.getDate();
+        // Set date to 1 to find the first day of the month
+        date.setDate(1);
+        var first_day = date.getDay();
+        // 35+firstDay is the number of date elements to be added to the dates table
+        // 35 is from (7 days in a week) * (up to 5 rows of dates in a month)
+        
+        
+        
+        for(var i=0; i<35+first_day; i++) {
+            console.log("loop i: " + i);
+            // setTimeout(function() {
+            //     // Data fetch completed
+            //     console.log("hey");
+            // }, 3000); // Simulate a 3-second fetch time
+            // Since some of the elements will be blank, 
+            // need to calculate actual date from index
+            var day = i-first_day+1;
+            // If it is a sunday, make a new row
+            if(i%7===0) {
+                calendar_days.append(row);
+                row = $("<tr class='table-row'></tr>");
+            }
+            // if current index isn't a day in this month, make it blank
+            if(i < first_day || day > day_count) {
+                var curr_date = $("<td class='table-date nil'>"+"</td>");
+                row.append(curr_date);
+            }   
+            else {
+                var curr_date = $("<td class='table-date'>"+day+"</td>");
+                var events = check_events(day, month+1, year);
+                if(today===day && $(".active-date").length===0) {
+                    curr_date.addClass("active-date");
+                    show_events(events, months[month], day, year);
+                }
+                // If this date has any events, style it with .event-date
+                if(events.length!==0) {
+                    curr_date.addClass("event-date");
+                }
+                // Set onClick handler for clicking a date
+                curr_date.click({events: events, month: months[month], day:day}, date_click);
+                row.append(curr_date);
+            }
+        }
+        // Append the last row and set the current year
+        calendar_days.append(row);
+        $(".year").text(year);
+        console.log("hiding screen!");
+        document.getElementById('loading-screen').style.display = 'none';
+        console.log("end init...");
+    }, 100); // Simulate a 3-second fetch time
 }
 
 // Get the number of days in a given month/year
@@ -231,6 +235,7 @@ function getCookie(name) {
 
 // Display all events of the selected date in card views
 function show_events(events, month, day, year) {
+    console.log("showing events...");
     // Clear the dates container
     $(".events-container").empty();
     $(".events-container").show(250);
@@ -328,6 +333,7 @@ function show_events(events, month, day, year) {
 
 // Checks if a specific date has any events
 function check_events(day, month, year) {
+    console.log("checking events...");
     var events = [];
     $.ajax({
         url: '/calendar/get-events/',

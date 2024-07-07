@@ -206,8 +206,8 @@ def setup_google_meet(request):
                 },
                 'conferenceData': {
                     'createRequest': {
-                        'requestId': 'some-random-string'
-                    }
+                        'requestId': 'some-random-string',
+                    },
                 },
                 'attendees': [
                     {'email': user_email},
@@ -231,6 +231,7 @@ def setup_google_meet(request):
                 'Mentor Meeting Scheduled',
                 'Google Meet with ' + mentor + " scheduled for " + str(month)+"/"+str(day)+"/"+str(year) + " at " + formatted_time + " (Chicago Time).\n\n"
                 + "The link to this Google Meet is: " + meeting_link 
+                + "\n\nThe PIN to this Google Meet is: 1234"
                 + "\n\nTo cancel this meeting, delete the event from your Google Calendar or mark your attendence as \"No\""
                 + "\n\nTopic of the meeting: " + topic,
                 os.getenv("EMAIL_HOST_USER"),
@@ -305,7 +306,8 @@ mentor_email_dict = {
     "Anubhav Choudhery": "choudhery@wisc.edu",
     "Harshvardhan Singh Rathore": "hvardhan2@wisc.edu",
     "Ruthika Ajit" : "rajit@wisc.edu",
-    "Garv Pundir" : "gpundir@wisc.edu"
+    "Garv Pundir" : "gpundir@wisc.edu",
+    "Mathom Johnson" : "mathomgj@gmail.com"
 }
 
 
