@@ -1,0 +1,40 @@
+{% extends 'home/base.html' %}
+{% load static %}
+{% block title %}Forum{% endblock %}
+
+{% block content %}
+<button id="show-form-btn" onclick="showForm()">Ask a Question</button>
+
+<div class="question-form" style="display:none;">
+    <form id="question-form" method="post" action="/forum/submit-question/">
+        {% csrf_token %}
+        <label for="question-title">Title:</label><br>
+        <input type="text" id="question-title" name="title" required><br>
+        <label for="question-body">Body:</label><br>
+        <textarea id="question-body" name="body" rows="4" required></textarea><br>
+        <button type="submit">Submit</button>
+    </form>
+</div>
+
+{% for q in questions %}
+    <div class="question">
+        <p>{{ q.title }}</p>
+        <p>{{ q.body }}</p>
+    </div>
+{% endfor %}
+
+<script>
+    var display = 0;
+    function showForm() {
+        if (display == 0) {
+            document.querySelector('.question-form').style.display = 'block';
+            display = 1;
+        }
+        else {
+            document.querySelector('.question-form').style.display = 'none';
+            display = 0;
+        }
+        
+    }
+</script>
+{% endblock %}

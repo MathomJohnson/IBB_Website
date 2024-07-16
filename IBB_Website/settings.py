@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',
     'appointments.apps.AppointmentsConfig',
     'register.apps.RegisterConfig',
+    'forum.apps.ForumConfig',
 ]
 
 MIDDLEWARE = [

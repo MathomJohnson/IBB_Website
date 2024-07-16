@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 import home.views as HomeViews
 import appointments.views as AppointmentViews
+import forum.views as ForumViews
 from register import views as v
 
 urlpatterns = [
@@ -29,8 +30,8 @@ urlpatterns = [
     path('calendar/meet/', AppointmentViews.setup_google_meet),
     path('calendar/google-login', AppointmentViews.google_login),
     path('calendar/oauth2callback', AppointmentViews.oauth2callback),
-    # path('calendar/zoom/', AppointmentViews.zoom_callback),
-    # path('mentor-zoom-auth/', AppointmentViews.mentor_zoom_auth),
+    path('forum/', ForumViews.main_forum),
+    path('forum/submit-question/', ForumViews.submit_question),
     path('register/', v.register),
     path('', HomeViews.homepage),
     path('', include('django.contrib.auth.urls')),
