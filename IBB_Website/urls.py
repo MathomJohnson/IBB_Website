@@ -32,6 +32,7 @@ urlpatterns = [
     path('calendar/oauth2callback', AppointmentViews.oauth2callback),
     path('forum/', ForumViews.main_forum),
     path('forum/submit-question/', ForumViews.submit_question),
+    path('forum/new-comment/', ForumViews.new_comment),
     path('register/', v.register),
     path('', HomeViews.homepage),
     path('', include('django.contrib.auth.urls')),

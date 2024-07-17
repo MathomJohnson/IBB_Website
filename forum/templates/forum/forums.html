@@ -1,25 +1,43 @@
 {% extends 'home/base.html' %}
 {% load static %}
 {% block title %}Forum{% endblock %}
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'forum/style.css' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}
 
 {% block content %}
-<button id="show-form-btn" onclick="showForm()">Ask a Question</button>
+<center>
+    <button id="show-form-btn" class="btn btn-primary" onclick="showForm()">Ask a Question</button>
+</center>
 
+<div class="question-form-wrapper">
 <div class="question-form" style="display:none;">
     <form id="question-form" method="post" action="/forum/submit-question/">
         {% csrf_token %}
-        <label for="question-title">Title:</label><br>
-        <input type="text" id="question-title" name="title" required><br>
-        <label for="question-body">Body:</label><br>
-        <textarea id="question-body" name="body" rows="4" required></textarea><br>
-        <button type="submit">Submit</button>
+        <p style="color:black;">Title:</p>
+        <input type="text" id="question-title" name="title" required style="margin:0px; padding:0px;"><br>
+        <p style="color:black;">Question:</p>
+        <textarea id="question-body" name="body" rows="4" required style="margin:0px; padding:0px;"></textarea><br>
+        <button type="submit" class="btn btn-success" style="margin:0px; padding:0px;">Submit</button>
     </form>
 </div>
-
+</div>
 {% for q in questions %}
     <div class="question">
-        <p>{{ q.title }}</p>
+        <p>{{ q.author }}</p>
+        <p><b>{{ q.title }}</b></p>
         <p>{{ q.body }}</p>
+
+        <button class="btn btn-danger" onclick="comment(this)">Comment</button>
+        <div class="create-comment" style="display:none;">
+            <form class="new-comment" method="post" action="/forum/new-comment/">
+                {% csrf_token %}
+                <textarea class="comment-body" name="body" rows="1" required></textarea>
+                <input type="hidden" value="{{ q.id }}" name="question">
+                <button class="btn btn-success" type="submit">Send</button>
+            </form>
+        </div>
     </div>
 {% endfor %}
 
@@ -35,6 +53,11 @@
             display = 0;
         }
         
+    }
+
+    function comment(button) {
+        const commentForm = button.nextElementSibling;
+        commentForm.style.display = commentForm.style.display === 'block' ? 'none' : 'block';
     }
 </script>
 {% endblock %}
