@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-<center>
+<!-- <center>
     <button id="show-form-btn" class="btn btn-primary" onclick="showForm()">Ask a Question</button>
 </center>
 
@@ -25,11 +25,13 @@
 </div>
 {% for q in questions %}
     <div class="question">
-        <p>{{ q.author }}</p>
-        <p><b>{{ q.title }}</b></p>
+        <div class="question-header">
+            <p class="author">{{ q.author }}</p>
+            <p class="title"><b>{{ q.title }}</b></p>
+        </div>
         <p>{{ q.body }}</p>
-
-        <button class="btn btn-danger" onclick="comment(this)">Comment</button>
+        <button class="btn btn-danger" onclick="viewReplies()">View Replies</button>
+        <button class="btn btn-danger" onclick="comment(this)">Reply</button>
         <div class="create-comment" style="display:none;">
             <form class="new-comment" method="post" action="/forum/new-comment/">
                 {% csrf_token %}
@@ -38,9 +40,46 @@
                 <button class="btn btn-success" type="submit">Send</button>
             </form>
         </div>
+    </div> 
+{% endfor %}-->
+<center>
+    <button id="show-form-btn" class="btn btn-primary" onclick="showForm()">Ask a Question</button>
+</center>
+<div class="question-form-wrapper">
+    <div class="question-form" style="display:none;">
+        <form id="question-form" method="post" action="/forum/submit-question/">
+            {% csrf_token %}
+            <p>Title:</p>
+            <input type="text" id="question-title" name="title" required>
+            <p>Question:</p>
+            <textarea id="question-body" name="body" rows="4" required></textarea>
+            <button type="submit" class="btn btn-success">Submit</button>
+        </form>
     </div>
-{% endfor %}
+</div>
 
+{% for q in questions %}
+<div class="question">
+    <div class="question-header">
+        <div class="info">
+            <p class="author">{{ q.author }}</p>
+            <p class="time">{{ q.created_at }}</p>
+        </div>
+        <p class="title">{{ q.title }}</p>
+    </div>
+    <p class="body">{{ q.body }}</p>
+    <button class="btn btn-danger" onclick="viewReplies()">View Replies</button>
+    <button class="btn btn-danger" onclick="comment(this)">Reply</button>
+    <div class="create-comment" style="display:none;">
+        <form class="new-comment" method="post" action="/forum/new-comment/">
+            {% csrf_token %}
+            <textarea class="comment-body" name="body" rows="1" required></textarea>
+            <input type="hidden" value="{{ q.id }}" name="question">
+            <button class="btn btn-success" type="submit">Send</button>
+        </form>
+    </div>
+</div>
+{% endfor %}
 <script>
     var display = 0;
     function showForm() {
