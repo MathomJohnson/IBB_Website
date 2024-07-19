@@ -4,6 +4,7 @@
 {% block extra_head %}
     <link rel="stylesheet" href="{% static 'forum/style.css' %}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -68,7 +69,7 @@
         <p class="title">{{ q.title }}</p>
     </div>
     <p class="body">{{ q.body }}</p>
-    <button class="btn btn-danger" onclick="viewReplies()">View Replies</button>
+    <button class="btn btn-danger" onclick="viewReplies(this)" data-comments-loaded="0" data-question-id="{{ q.id }}">View Replies</button>
     <button class="btn btn-danger" onclick="comment(this)">Reply</button>
     <div class="create-comment" style="display:none;">
         <form class="new-comment" method="post" action="/forum/new-comment/">
@@ -77,6 +78,9 @@
             <input type="hidden" value="{{ q.id }}" name="question">
             <button class="btn btn-success" type="submit">Send</button>
         </form>
+    </div>
+    <div class="comments-container" style="display:block;"> <!--style="display:none;-->
+        <!-- Comments will be appended here -->
     </div>
 </div>
 {% endfor %}
@@ -97,6 +101,58 @@
     function comment(button) {
         const commentForm = button.nextElementSibling;
         commentForm.style.display = commentForm.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function viewReplies(button) {
+        var questionId = $(button).data('question-id');
+        var commentsContainer = $(button).siblings('.comments-container');
+        var commentsLoaded = $(button).data('comments-loaded');
+        if (commentsLoaded === 1) {
+            if (commentsContainer.css('display') === 'block') {
+                commentsContainer.css('display', 'none'); // Hide if currently visible
+            } else {
+                commentsContainer.css('display', 'block'); // Show if currently hidden
+            }
+        } else {
+            $.ajax({
+                url: '/forum/get-comments/',
+                method: 'GET',
+                data: {
+                    question_id: questionId
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        comments = response.comments;
+                        if (comments.length < 1) {
+                            alert('No comments found for this question.');
+                        }
+                        // Iterate over the response and append each comment to the container
+                        comments.forEach(function(comment) {
+                            commentsContainer.append('<p>' + comment.body + '</p>');
+                        });
+                        $(button).data('comments-loaded', 1);
+                    }
+                    // if (response.length > 0) {
+                    //     // Clear the container
+                    //     commentsContainer.empty();
+
+                    //     // Iterate over the response and append each comment to the container
+                    //     response.forEach(function(comment) {
+                    //         commentsContainer.append('<p>' + comment.content + '</p>');
+                    //     });
+
+                    //     // Show the comments container
+                    //     commentsContainer.show();
+                    // } else {
+                    //     alert('No comments found for this question');
+                    // }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    alert('An error occurred while loading the comments');
+                }
+            });
+        }
     }
 </script>
 {% endblock %}

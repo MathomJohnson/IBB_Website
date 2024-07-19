@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from .models import Question, Comment
 
 # Create your views here.
@@ -31,3 +31,16 @@ def new_comment(request):
         new_comment.save()
 
         return HttpResponseRedirect("/forum/")
+    
+def get_comments(request):
+    if request.method == "GET":
+        question_id = request.GET.get('question_id')
+        question = Question.objects.get(id=question_id)
+        comments = Comment.objects.filter(question=question)
+        comments_data = list(comments.values('id', 'author__username', 'body', 'created_at'))
+        for c in comments_data:
+            print("&&&&&&&&&&&&&&&&&&&&&&&&&&&!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            print(c)
+        return JsonResponse({'status': 'success', 'comments': comments_data}, status=200)
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)

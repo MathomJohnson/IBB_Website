@@ -33,6 +33,7 @@ urlpatterns = [
     path('forum/', ForumViews.main_forum),
     path('forum/submit-question/', ForumViews.submit_question),
     path('forum/new-comment/', ForumViews.new_comment),
+    path('forum/get-comments/', ForumViews.get_comments),
     path('register/', v.register),
     path('', HomeViews.homepage),
     path('', include('django.contrib.auth.urls')),
