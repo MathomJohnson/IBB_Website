@@ -5,6 +5,7 @@ from .models import Question, Comment
 # Create your views here.
 def main_forum(request):
     questions = Question.objects.all()
+    questions = questions.order_by('-created_at')
     return render(request, "forum/forums.html", {
         'questions': questions,
     })

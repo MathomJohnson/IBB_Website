@@ -1,87 +1,9 @@
-/* .question {
-    display: flex;
-    width:50%;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid black;
-    background-color: #e1d7cb;
-    box-shadow: 10px 10px 7px black;
-    margin:40px auto;
-    padding:12px;
-}
-.question p {
-    color:black;
-}
-
-#show-form-btn {
-    margin: 50px;
-    margin-bottom: 0px;
-}
-
-.question-form-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.question-form {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 30%; 
-    border: 1px solid black;
-    background-color: #e1d7cb;
-    padding: 10px;
-    margin-top: 20px;
-    
-}
-
-#question-form {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin:0px;
-    padding: 0px;
-}
-
-#question-form p,
-#question-form input,
-#question-form textarea,
-#question-form button {
-    margin: 0px 0; 
-    padding: 0px;
-    width: 95%; 
-}
-
-.question-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.question-header .author {
-    font-weight: bold;
-    font-size: 1.2em;
-    color: #333;
-    flex: 1;
-}
-.question-header .title {
-    font-weight: bold;
-    font-size: 1.4em;
-    color: #007bff;
-    text-align: center;
-    flex: 2;
-} */
-
-
 .question {
     border: 1px solid #ddd;
     padding: 10px;
     margin: 20px auto;
     border-radius: 10px;
-    background-color: #f9f9f9;
+    background-color: #e1d7cb;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     width: 55%;
 }
@@ -137,6 +59,10 @@
     margin-top: 0;
 }
 
+.comments-container {
+    color:#333;
+}
+
 /* Ask A Question button */
 .question-form-wrapper {
     display: flex;
@@ -145,7 +71,7 @@
     padding: 20px;
 }
 .question-form {
-    background-color: #fff;
+    background-color: #e1d7cb;
     border: 1px solid #ddd;
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);

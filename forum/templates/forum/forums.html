@@ -8,82 +8,57 @@
 {% endblock %}
 
 {% block content %}
-<!-- <center>
-    <button id="show-form-btn" class="btn btn-primary" onclick="showForm()">Ask a Question</button>
-</center>
-
-<div class="question-form-wrapper">
-<div class="question-form" style="display:none;">
-    <form id="question-form" method="post" action="/forum/submit-question/">
-        {% csrf_token %}
-        <p style="color:black;">Title:</p>
-        <input type="text" id="question-title" name="title" required style="margin:0px; padding:0px;"><br>
-        <p style="color:black;">Question:</p>
-        <textarea id="question-body" name="body" rows="4" required style="margin:0px; padding:0px;"></textarea><br>
-        <button type="submit" class="btn btn-success" style="margin:0px; padding:0px;">Submit</button>
-    </form>
-</div>
-</div>
-{% for q in questions %}
-    <div class="question">
-        <div class="question-header">
-            <p class="author">{{ q.author }}</p>
-            <p class="title"><b>{{ q.title }}</b></p>
-        </div>
-        <p>{{ q.body }}</p>
-        <button class="btn btn-danger" onclick="viewReplies()">View Replies</button>
-        <button class="btn btn-danger" onclick="comment(this)">Reply</button>
-        <div class="create-comment" style="display:none;">
-            <form class="new-comment" method="post" action="/forum/new-comment/">
-                {% csrf_token %}
-                <textarea class="comment-body" name="body" rows="1" required></textarea>
-                <input type="hidden" value="{{ q.id }}" name="question">
-                <button class="btn btn-success" type="submit">Send</button>
-            </form>
-        </div>
-    </div> 
-{% endfor %}-->
 <center>
-    <button id="show-form-btn" class="btn btn-primary" onclick="showForm()">Ask a Question</button>
+    <button id="show-form-btn" class="btn btn-primary" onclick="showForm()">Ask a Question!</button>
 </center>
-<div class="question-form-wrapper">
-    <div class="question-form" style="display:none;">
-        <form id="question-form" method="post" action="/forum/submit-question/">
-            {% csrf_token %}
-            <p>Title:</p>
-            <input type="text" id="question-title" name="title" required>
-            <p>Question:</p>
-            <textarea id="question-body" name="body" rows="4" required></textarea>
-            <button type="submit" class="btn btn-success">Submit</button>
-        </form>
+<div class="question-form-wrapper" style="margin-top:0px;">
+    <div class="question-form" style="display:none;margin-top:0px;">
+        {% if user.is_authenticated %}
+            <form id="question-form" method="post" action="/forum/submit-question/">
+                {% csrf_token %}
+                <p>Title:</p>
+                <input type="text" id="question-title" name="title" style="border:1.5px solid black" required>
+                <p>Question:</p>
+                <textarea id="question-body" name="body" rows="4" style="border:1.5px solid black" required></textarea>
+                <button type="submit" class="btn btn-success">Submit</button>
+            </form>
+        {% else %}
+            <p>To ask a question, please sign in <a href='/login/'>here</a></p>
+        {% endif %}
     </div>
 </div>
 
+<!--Display the questions-->
 {% for q in questions %}
-<div class="question">
-    <div class="question-header">
-        <div class="info">
-            <p class="author">{{ q.author }}</p>
-            <p class="time">{{ q.created_at }}</p>
+    <div class="question" style="background-color:#e1d7cb;">
+        <div class="question-header">
+            <div class="info">
+                <p class="author">{{ q.author }}</p>
+                <p class="time">{{ q.created_at }}</p>
+            </div>
+            <p class="title">{{ q.title }}</p>
         </div>
-        <p class="title">{{ q.title }}</p>
+        <p class="body">{{ q.body }}</p>
+        <button class="btn btn-danger" onclick="viewReplies(this)" data-comments-loaded="0" data-question-id="{{ q.id }}">View Replies</button>
+        {% if user.is_staff %}
+            <button class="btn btn-danger" onclick="comment(this)">Reply</button>
+            <div class="create-comment" style="display:none;">
+                <form class="new-comment" method="post" action="/forum/new-comment/">
+                    {% csrf_token %}
+                    <textarea class="comment-body" name="body" rows="1" required></textarea>
+                    <input type="hidden" value="{{ q.id }}" name="question">
+                    <button class="btn btn-success" type="submit">Send</button>
+                </form>
+            </div>
+        {% endif %}
+        <div class="comments-container" style="display:none; color:black;"> <!--style="display:none;-->
+            <br>
+            <!-- Comments will be appended here -->
+        </div>
     </div>
-    <p class="body">{{ q.body }}</p>
-    <button class="btn btn-danger" onclick="viewReplies(this)" data-comments-loaded="0" data-question-id="{{ q.id }}">View Replies</button>
-    <button class="btn btn-danger" onclick="comment(this)">Reply</button>
-    <div class="create-comment" style="display:none;">
-        <form class="new-comment" method="post" action="/forum/new-comment/">
-            {% csrf_token %}
-            <textarea class="comment-body" name="body" rows="1" required></textarea>
-            <input type="hidden" value="{{ q.id }}" name="question">
-            <button class="btn btn-success" type="submit">Send</button>
-        </form>
-    </div>
-    <div class="comments-container" style="display:block;"> <!--style="display:none;-->
-        <!-- Comments will be appended here -->
-    </div>
-</div>
 {% endfor %}
+<!--End of question display-->
+
 <script>
     var display = 0;
     function showForm() {
@@ -124,28 +99,15 @@
                     if (response.status === 'success') {
                         comments = response.comments;
                         if (comments.length < 1) {
-                            alert('No comments found for this question.');
+                            commentsContainer.append('<p style="color:#333; margin-bottom:0px;"> No comments yet. </p>');
                         }
                         // Iterate over the response and append each comment to the container
                         comments.forEach(function(comment) {
-                            commentsContainer.append('<p>' + comment.body + '</p>');
+                            commentsContainer.append('<p style="color:#333;"><b>'+comment.author__username+'</b> <span class="badge text-bg-danger">Mentor</span> '+'  '+comment.body+'</p>');
                         });
                         $(button).data('comments-loaded', 1);
+                        commentsContainer.css('display', 'block');
                     }
-                    // if (response.length > 0) {
-                    //     // Clear the container
-                    //     commentsContainer.empty();
-
-                    //     // Iterate over the response and append each comment to the container
-                    //     response.forEach(function(comment) {
-                    //         commentsContainer.append('<p>' + comment.content + '</p>');
-                    //     });
-
-                    //     // Show the comments container
-                    //     commentsContainer.show();
-                    // } else {
-                    //     alert('No comments found for this question');
-                    // }
                 },
                 error: function(xhr, status, error) {
                     console.error('Error:', error);
