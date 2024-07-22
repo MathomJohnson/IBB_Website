@@ -115,3 +115,25 @@
 }
 
 /* end of Ask A question button */
+
+@media only screen and (max-width: 768px) {
+    .question {
+        width:85%;
+    }
+}
+
+@media only screen and (max-width: 576px) {
+    .question {
+        width:100%;
+        border-radius: 0px;
+    }
+}
+
+@media only screen and (max-width: 415px) {
+    .question-header .info {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+}

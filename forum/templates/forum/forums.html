@@ -34,7 +34,7 @@
         <div class="question-header">
             <div class="info">
                 <p class="author">{{ q.author }}</p>
-                <p class="time">{{ q.created_at }}</p>
+                <p class="time">{{ q.created_at|date:"n/j/y g:ia" }}</p>
             </div>
             <p class="title">{{ q.title }}</p>
         </div>
