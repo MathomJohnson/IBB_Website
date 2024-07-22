@@ -166,7 +166,21 @@
 	<script type="text/javascript">
 		var auth = "{{request.user.is_staff}}"
 
+		function validateEmail(email) {
+			const emailPattern = /^[a-zA-Z0-9._%+-]+@wisc\.edu$/;
+			return emailPattern.test(email);
+		}
+
 		function submitForm() {
+			const emailField = document.getElementById("modal-email-field");
+			const email = emailField.value;
+
+			if (!validateEmail(email)) {
+				alert("Please enter a valid email address ending with @wisc.edu.");
+				emailField.focus();
+				return false;
+			}
+
         	document.getElementById("modal-form").submit();
     	}
 

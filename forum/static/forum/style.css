@@ -1,0 +1,139 @@
+.question {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 20px auto;
+    border-radius: 10px;
+    background-color: #e1d7cb;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 55%;
+}
+.question-header {
+    padding: 0px 0;
+}
+.question-header .info {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 5px;
+}
+.question-header .author {
+    font-weight: bold;
+    font-size: 1.2em;
+    color: #333;
+    margin-right: 20px;
+}
+.question-header .time {
+    font-size: 1.2em;
+    color: #666;
+}
+.question-header .title {
+    font-weight: bold;
+    font-size: 1.4em;
+    color: #3c3f41;
+    text-align: center;
+    margin-top: 0px;
+}
+.question p.body {
+    font-size: 1em;
+    color: #666;
+    margin: 5px 0;
+}
+.question .btn {
+    margin: 5px;
+}
+.question .create-comment {
+    margin-top: 10px;
+}
+.question .create-comment .new-comment {
+    display: flex;
+    align-items: center;
+}
+.question .create-comment .comment-body {
+    flex: 1;
+    padding: 10px;
+    margin-right: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+.question .create-comment .btn {
+    margin-top: 0;
+}
+
+.comments-container {
+    color:#333;
+}
+
+/* Ask A Question button */
+.question-form-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+.question-form {
+    background-color: #e1d7cb;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 100%;
+    max-width: 500px;
+    margin-top: 20px;
+}
+.question-form p {
+    margin: 10px 0;
+    font-size: 1.1em;
+    color: #333;
+}
+.question-form input[type="text"],
+.question-form textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: .9em;
+}
+.question-form button {
+    width: 100%;
+    padding: 10px;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 1.1em;
+    cursor: pointer;
+}
+.question-form button:hover {
+    background-color: #218838;
+}
+#show-form-btn {
+    display: block;
+    margin: 20px auto;
+}
+
+/* end of Ask A question button */
+
+@media only screen and (max-width: 768px) {
+    .question {
+        width:85%;
+    }
+}
+
+@media only screen and (max-width: 576px) {
+    .question {
+        width:100%;
+        border-radius: 0px;
+    }
+}
+
+@media only screen and (max-width: 415px) {
+    .question-header .info {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+}
