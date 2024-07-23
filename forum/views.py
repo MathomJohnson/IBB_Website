@@ -38,7 +38,7 @@ def get_comments(request):
         question_id = request.GET.get('question_id')
         question = Question.objects.get(id=question_id)
         comments = Comment.objects.filter(question=question)
-        comments_data = list(comments.values('id', 'author__username', 'body', 'created_at'))
+        comments_data = list(comments.values('id', 'author__is_staff', 'author__username', 'body', 'created_at'))
         for c in comments_data:
             print("&&&&&&&&&&&&&&&&&&&&&&&&&&&!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             print(c)
